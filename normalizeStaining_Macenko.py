@@ -75,14 +75,3 @@ def normalizeStaining(I):
     return Inorm
 
 
-# import cv2 as cv
-# import matplotlib.pyplot as plt
-#
-# I = cv.cvtColor(cv.imread('im1.tif'), cv.COLOR_BGR2RGB)
-# x = normalizeStaining(I)
-#
-# plt.figure(1)
-# plt.imshow(I)
-# plt.figure(2)
-# plt.imshow(x)
-# plt.show()
