@@ -73,5 +73,3 @@ def normalizeStaining(I):
     Inorm = np.array(Inorm, dtype=np.uint8)
 
     return Inorm
-
-
