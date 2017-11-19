@@ -34,7 +34,6 @@ def normalizeStaining(I):
 
     HE_Ref = np.array([[0.5626, 0.7201, 0.4062], [0.2159, 0.8012, 0.5581]]).T
     HE_Ref = normalize_columns(HE_Ref)
-    print(HE_Ref)
 
     (h, w, c) = np.shape(I)
     I = np.reshape(I, (h * w, c))
