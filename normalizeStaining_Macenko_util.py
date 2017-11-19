@@ -61,9 +61,9 @@ def normalizeStaining(I):
     Y = OD.T
     C = np.linalg.lstsq(HE, Y)[0]
 
-    # maxC_Ref = np.array([1.9705, 1.0308]).reshape((2, 1))
-    # maxC = np.percentile(C, 99, axis=1).reshape((2, 1))
-    # C = C * maxC_Ref / maxC
+    maxC_Ref = np.array([1.9705, 1.0308]).reshape((2, 1))
+    maxC = np.percentile(C, 99, axis=1).reshape((2, 1))
+    C = C * maxC_Ref / maxC
 
     Inorm = Io * np.exp(- np.dot(HE_Ref, C))
 
