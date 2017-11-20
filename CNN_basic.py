@@ -10,6 +10,8 @@ sub = 10
 idx = np.random.choice(range(N), sub)
 X = X[idx]
 Y = Y[idx]
+X = X.astype(np.float32)
+X -= np.mean(X, axis=0)
 
 ######
 
@@ -87,9 +89,9 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Check we can get 100% accuracy on training set!
-for i in range(100):
+for i in range(10):
     print('i={}'.format(i))
     sess.run(train_step, feed_dict={x: X, y: Y, training: True})
 
-    if i % 10 == 0:
+    if i % 2 == 0:
         print(sess.run(accuracy, {x: X, y: Y, training: False}))
