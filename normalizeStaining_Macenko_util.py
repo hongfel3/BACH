@@ -2,6 +2,11 @@ import numpy as np
 
 
 def normalize_columns(A):
+    """
+    Normalize columns of an array
+    :param A:
+    :return:
+    """
     temp = np.zeros(A.shape)
     n = A.shape[1]
     for i in range(n):
@@ -21,22 +26,28 @@ def normalizeStaining(I, target):
 
     T. Araújo et al., ‘Classification of breast cancer histology images using Convolutional Neural Networks’, PLOS ONE, vol. 12, no. 6, p. e0177544, Jun. 2017.
 
+    and the MATLAB toolbox available at:
+
+    https://warwick.ac.uk/fac/sci/dcs/research/tia/software/sntoolbox/
+
     :param I:
     :param target:
     :return:
     """
+    # Remove zeros
     mask = (I == 0)
     I[mask] = 1
     I = I.astype(np.float32)
-
     mask = (target == 0)
     target[mask] = 1
     target = target.astype(np.float32)
 
+    # Parameters
     Io = 255.0
     beta = 0.15
     alpha = 1
 
+    # Get source stain matrix
     (h, w, c) = np.shape(I)
     I = np.reshape(I, (h * w, c))
     OD = - np.log(I / Io)
@@ -58,7 +69,8 @@ def normalizeStaining(I, target):
         HE = np.array([v2, v1, v3]).T
     HE = normalize_columns(HE)
 
-    target = np.reshape(target, (h * w, c))
+    # Get target stain matrix
+    target = np.reshape(target, (-1, 3))
     OD_target = - np.log(target / Io)
     ODhat_target = (OD_target[(np.logical_not((OD_target < beta).any(axis=1))), :])
     _, V = np.linalg.eigh(np.cov(ODhat_target, rowvar=False))
@@ -78,10 +90,11 @@ def normalizeStaining(I, target):
         HE_target = np.array([v2, v1, v3]).T
     HE_target = normalize_columns(HE_target)
 
+    # Get source concentrations
     Y = OD.T
     C = np.linalg.lstsq(HE, Y)[0]
 
-    ###
+    ### Modify concentrations ###
 
     maxC = np.percentile(C, 99, axis=1).reshape((3, 1))
     maxC[2] = 1
@@ -93,10 +106,10 @@ def normalizeStaining(I, target):
 
     C = C * maxC_target / maxC
 
-    ###
+    ### Done ###
 
+    # Final tidy up
     Inorm = Io * np.exp(- np.dot(HE_target, C))
-
     Inorm = np.reshape(np.transpose(Inorm), (h, w, c))
     Inorm = np.clip(Inorm, 0, 255)
     Inorm = np.array(Inorm, dtype=np.uint8)

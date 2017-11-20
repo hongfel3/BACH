@@ -3,7 +3,7 @@ import os
 import normalizeStaining_Macenko_util as sn
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Photos'
-save_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Photos_normalized'
+save_dir = '/home/peter/BACH_remake/Photos_normalized'
 
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
