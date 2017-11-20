@@ -41,6 +41,13 @@ def dense_relu(x, scope, num_out):
         return tf.nn.relu(h1)
 
 
+def dense(x, scope, num_out):
+    with tf.variable_scope(scope):
+        h1 = tf.layers.dense(x, units=num_out, activation=None, name='fc',
+                             kernel_initializer=tf.contrib.layers.xavier_initializer())
+        return h1
+
+
 ######
 
 tf.reset_default_graph()
@@ -60,7 +67,7 @@ l10 = max_pool3x3(l9)
 flat = tf.contrib.layers.flatten(l10)
 f1 = dense_relu(flat, 'fc1', 256)
 f2 = dense_relu(f1, 'fc2', 128)
-out = tf.layers.dense(f2, units=4, activation=None, name='fc3')
+out = dense(f2, 'fc3', 4)
 
 accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(y, 1), tf.argmax(out, 1)), 'float32'))
 
