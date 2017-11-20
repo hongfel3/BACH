@@ -34,6 +34,8 @@ def save_image(im, path):
 
 ###########################################
 
+target=read_image(os.path.join(data_dir,'Benign','b005.tif'))
+
 for c in classes:
     for i in range(100):
         filename = prefixes[c] + i2str(i + 1) + '.tif'
@@ -41,7 +43,7 @@ for c in classes:
         path = os.path.join(data_dir, c, filename)
         image = read_image(path)
 
-        normal=sn.normalizeStaining(image)
+        normal=sn.normalizeStaining(image,target)
 
         save_filename = prefixes[c] + i2str(i + 1) + '_normalized.tif'
         save_path = os.path.join(save_dir, c, save_filename)
