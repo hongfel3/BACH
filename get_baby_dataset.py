@@ -71,12 +71,12 @@ def get_patches(image):
 
 #############################################
 
-X=np.zeros((280*4,512,512,3))
-Y=np.zeros((280*4,1))
+X=np.zeros((280*4,512,512,3),dtype=np.uint8)
+Y=np.zeros((280*4,1),dtype=np.uint8)
 
 cnt=0
 for c in classes:
-    filename = prefixes[c] + '1_normalized.tif'
+    filename = prefixes[c] + '001_normalized.tif'
     print('Doing Image {}'.format(filename))
     path = os.path.join(data_dir, c, filename)
     image = read_image(path)
@@ -85,6 +85,8 @@ for c in classes:
 
     X[cnt * 280:(cnt + 1) * 280] = patches
     Y[cnt * 280:(cnt + 1) * 280] = cnt
+
+    cnt+=1
 
 np.save('babyX.npy',X)
 np.save('babyY.npy',Y)
