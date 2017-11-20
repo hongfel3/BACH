@@ -42,11 +42,13 @@ for c in classes:
         image[mask] = 1
         image = image.astype(np.float32)
 
-        OD = -np.log(image / 255.0)
+        Io=240
+        OD = -np.log(image / Io)
 
-        print(np.mean(OD))
-        print(np.std(OD))
-        mask = (OD < np.mean(OD)/2).any(axis=2)
+        # print(np.mean(OD))
+        # print(np.std(OD))
+        # mask = (OD > np.mean(OD)/2).any(axis=2)
+        mask = (OD > 0.15).any(axis=2)
 
         save_filename = prefixes[c] + i2str(i + 1) + '.png'
         save_path = os.path.join(save_dir, c, save_filename)

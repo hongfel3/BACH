@@ -43,7 +43,7 @@ for c in classes:
         path = os.path.join(data_dir, c, filename)
         image = read_image(path)
 
-        normal=sn.normalizeStaining(image,target)
+        normal=sn.normalizeStaining(image,target,Io=240)
 
         save_filename = prefixes[c] + i2str(i + 1) + '_normalized.tif'
         save_path = os.path.join(save_dir, c, save_filename)

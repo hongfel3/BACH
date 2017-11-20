@@ -16,7 +16,7 @@ def normalize_columns(A):
     return temp
 
 
-def normalizeStaining(I, target):
+def normalizeStaining(I, target, Io=255, beta=0.15, alpha=1):
     """
     Stain normalization based on the method of:
 
@@ -29,9 +29,11 @@ def normalizeStaining(I, target):
     and the MATLAB toolbox available at:
 
     https://warwick.ac.uk/fac/sci/dcs/research/tia/software/sntoolbox/
-
     :param I:
     :param target:
+    :param alpha:
+    :param beta:
+    :param Io:
     :return:
     """
     # Remove zeros
@@ -42,17 +44,11 @@ def normalizeStaining(I, target):
     target[mask] = 1
     target = target.astype(np.float32)
 
-    # Parameters
-    Io = 255.0
-    beta = 0.15
-    alpha = 1
-
     # Get source stain matrix
     (h, w, c) = np.shape(I)
     I = np.reshape(I, (h * w, c))
     OD = - np.log(I / Io)
-    # ODhat = (OD[(np.logical_not((OD < beta).any(axis=1))), :])
-    ODhat = (OD[(np.logical_not((OD < np.mean(OD)/2).any(axis=1))), :])
+    ODhat = (OD[(OD > beta).any(axis=1), :])
     _, V = np.linalg.eigh(np.cov(ODhat, rowvar=False))
     V = V[:, [2, 1]]
     if V[0, 0] < 0: V[:, 0] *= -1
@@ -73,8 +69,7 @@ def normalizeStaining(I, target):
     # Get target stain matrix
     target = np.reshape(target, (-1, 3))
     OD_target = - np.log(target / Io)
-    # ODhat_target = (OD_target[(np.logical_not((OD_target < beta).any(axis=1))), :])
-    ODhat_target = (OD[(np.logical_not((OD_target < np.mean(OD_target)/2).any(axis=1))), :])
+    ODhat_target = (OD_target[(OD_target > beta).any(axis=1), :])
     _, V = np.linalg.eigh(np.cov(ODhat_target, rowvar=False))
     V = V[:, [2, 1]]
     if V[0, 0] < 0: V[:, 0] *= -1
