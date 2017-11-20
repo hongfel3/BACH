@@ -42,7 +42,7 @@ for c in classes:
         image[mask] = 1
         image = image.astype(np.float32)
 
-        Io=240
+        Io = 240
         OD = -np.log(image / Io)
 
         # print(np.mean(OD))
@@ -53,4 +53,4 @@ for c in classes:
         save_filename = prefixes[c] + i2str(i + 1) + '.png'
         save_path = os.path.join(save_dir, c, save_filename)
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        cv.imwrite(save_path, 255*mask.astype(np.uint8))
+        cv.imwrite(save_path, 255 * mask.astype(np.uint8), [cv.IMWRITE_PNG_COMPRESSION, 5])

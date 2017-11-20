@@ -2,7 +2,7 @@ import numpy as np
 import cv2 as cv
 import os
 
-data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Photos'
+data_dir = '/home/peter/BACH_remake/Photos_normalized'
 
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
@@ -74,7 +74,7 @@ def get_patches(image):
 
 for c in classes:
     for i in range(100):
-        filename = prefixes[c] + i2str(i + 1) + '.tif'
+        filename = prefixes[c] + i2str(i + 1) + '_normalized.tif'
         print('Doing Image {}'.format(filename))
         path = os.path.join(data_dir, c, filename)
         image = read_image(path)
