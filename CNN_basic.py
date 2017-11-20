@@ -1,18 +1,28 @@
 import tensorflow as tf
 import numpy as np
 
+######
+
 X = np.load('babyX.npy')
 Y = np.eye(4)[np.load('babyY.npy').reshape(-1)]
-
 N = np.shape(X)[0]
-bs = 10
+sub = 10
+idx = np.random.choice(range(N), sub)
+X = X[idx]
+Y = Y[idx]
+
+######
+
+lr = 1e-3
 
 
 ######
 
+
 def conv_relu3x3(x, scope, num_filters, padding='valid'):
     with tf.variable_scope(scope):
-        h1 = tf.layers.conv2d(x, filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=padding, name='conv')
+        h1 = tf.layers.conv2d(x, filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=padding, name='conv',
+                              kernel_initializer=tf.contrib.layers.xavier_initializer())
         return tf.nn.relu(h1)
 
 
@@ -26,7 +36,8 @@ def max_pool2x2(x):
 
 def dense_relu(x, scope, num_out):
     with tf.variable_scope(scope):
-        h1 = tf.layers.dense(x, units=num_out, activation=None, name='fc')
+        h1 = tf.layers.dense(x, units=num_out, activation=None, name='fc',
+                             kernel_initializer=tf.contrib.layers.xavier_initializer())
         return tf.nn.relu(h1)
 
 
@@ -51,11 +62,21 @@ f1 = dense_relu(flat, 'fc1', 256)
 f2 = dense_relu(f1, 'fc2', 128)
 out = tf.layers.dense(f2, units=4, activation=None, name='fc3')
 
+accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(y, 1), tf.argmax(out, 1)), 'float32'))
+
+loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=out))
+
+train_step = tf.train.AdamOptimizer(learning_rate=lr).minimize(loss)
+
 ######
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-idx = np.random.choice(range(N), bs)
+# Check we can get 100% accuracy on training set!
+for i in range(100):
+    print('i={}'.format(i))
+    sess.run(train_step, feed_dict={x: X, y: Y})
 
-f = sess.run(out, feed_dict={x: X[idx], y: Y[idx]})
+    if i % 10 == 0:
+        print(sess.run(accuracy, {x: X, y: Y}))
