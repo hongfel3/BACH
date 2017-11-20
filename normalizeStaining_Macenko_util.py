@@ -51,7 +51,8 @@ def normalizeStaining(I, target):
     (h, w, c) = np.shape(I)
     I = np.reshape(I, (h * w, c))
     OD = - np.log(I / Io)
-    ODhat = (OD[(np.logical_not((OD < beta).any(axis=1))), :])
+    # ODhat = (OD[(np.logical_not((OD < beta).any(axis=1))), :])
+    ODhat = (OD[(np.logical_not((OD < np.mean(OD)/2).any(axis=1))), :])
     _, V = np.linalg.eigh(np.cov(ODhat, rowvar=False))
     V = V[:, [2, 1]]
     if V[0, 0] < 0: V[:, 0] *= -1
@@ -72,7 +73,8 @@ def normalizeStaining(I, target):
     # Get target stain matrix
     target = np.reshape(target, (-1, 3))
     OD_target = - np.log(target / Io)
-    ODhat_target = (OD_target[(np.logical_not((OD_target < beta).any(axis=1))), :])
+    # ODhat_target = (OD_target[(np.logical_not((OD_target < beta).any(axis=1))), :])
+    ODhat_target = (OD[(np.logical_not((OD_target < np.mean(OD_target)/2).any(axis=1))), :])
     _, V = np.linalg.eigh(np.cov(ODhat_target, rowvar=False))
     V = V[:, [2, 1]]
     if V[0, 0] < 0: V[:, 0] *= -1

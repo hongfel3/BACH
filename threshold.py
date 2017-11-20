@@ -1,9 +1,10 @@
 import cv2 as cv
 import os
 import normalizeStaining_Macenko_util as sn
+import numpy as np
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Photos'
-save_dir = '/home/peter/BACH_remake/Photos_normalized'
+save_dir = '/home/peter/BACH_remake/thresholded'
 
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
@@ -27,14 +28,8 @@ def i2str(i):
         return s
 
 
-def save_image(im, path):
-    im = cv.cvtColor(im, cv.COLOR_RGB2BGR)
-    cv.imwrite(path, im)
+#############################################
 
-
-###########################################
-
-target=read_image(os.path.join(data_dir,'Benign','b027.tif'))
 
 for c in classes:
     for i in range(100):
@@ -43,9 +38,17 @@ for c in classes:
         path = os.path.join(data_dir, c, filename)
         image = read_image(path)
 
-        normal=sn.normalizeStaining(image,target)
+        mask = (image == 0)
+        image[mask] = 1
+        image = image.astype(np.float32)
 
-        save_filename = prefixes[c] + i2str(i + 1) + '_normalized.tif'
+        OD = -np.log(image / 255.0)
+
+        print(np.mean(OD))
+        print(np.std(OD))
+        mask = (OD < np.mean(OD)/2).any(axis=2)
+
+        save_filename = prefixes[c] + i2str(i + 1) + '.png'
         save_path = os.path.join(save_dir, c, save_filename)
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        save_image(normal, save_path)
+        cv.imwrite(save_path, 255*mask.astype(np.uint8))
