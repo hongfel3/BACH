@@ -33,8 +33,6 @@ def save_aspng(im, full_path, compression=3):
 
 ###########################################
 
-target = read_image(os.path.join(data_dir, 'Benign', 'b027.tif'))
-
 for c in classes:
     for i in range(100):
         filename = prefixes[c] + i2str(i + 1) + '.tif'
