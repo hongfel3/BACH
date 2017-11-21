@@ -106,8 +106,8 @@ for c in classes:
 
         patches = get_patches(image)
 
-        for j in range(8):
+        for j in range(35):
             patch = patches[j]
             save_filename = prefixes[c] + i2str(i + 1) + '_patch' + i2str(j + 1) + '.png'
-            save_path = os.path.join(save_dir, 'patches', c, save_filename)
+            save_path = os.path.join(save_dir, c, save_filename)
             save_aspng(patch, save_path, compression=1)
