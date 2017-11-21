@@ -1,9 +1,8 @@
 import cv2 as cv
 import os
-import stainNorm_utils as stain
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Photos'
-save_dir = '/home/peter/datasets/BACH_normalized'
+save_dir = '/home/peter/datasets/BACH_thumbnails'
 
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
@@ -43,9 +42,7 @@ for c in classes:
         path = os.path.join(data_dir, c, filename)
         image = read_image(path)
 
-        normal = stain.normalize_Reinhard(image, target)
-
-        save_filename = prefixes[c] + i2str(i + 1) + '_normalized.png'
+        save_filename = prefixes[c] + i2str(i + 1) + '_thumb.png'
         save_path = os.path.join(save_dir, c, save_filename)
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        save_aspng(normal, save_path, compression=3)
+        save_aspng(image, save_path, compression=5)
