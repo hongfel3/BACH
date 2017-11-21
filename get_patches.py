@@ -2,7 +2,8 @@ import numpy as np
 import cv2 as cv
 import os
 
-data_dir = '/home/peter/BACH_remake/Photos_normalized'
+data_dir = '/home/peter/datasets/BACH_normalized'
+save_dir = '/home/peter/datasets/BACH_patches'
 
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
@@ -26,7 +27,31 @@ def i2str(i):
         return s
 
 
+def save_aspng(im, full_save_path, compression=3):
+    """
+    Save an image as png with optional compression (not sure this works!). Specify full_save_path e.g. '/home/peter/mypic.png'. Directory is built if not present.
+    :param im:
+    :param full_save_path:
+    :param compression:
+    :return:
+    """
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    im = cv.cvtColor(im, cv.COLOR_RGB2BGR)
+    cv.imwrite(full_save_path, im, [cv.IMWRITE_PNG_COMPRESSION, compression])
+
+
 def get_patches(image):
+    stack = np.zeros((35, 512, 512, 3), dtype=np.uint8)
+    counter = 0
+    for i in range(5):
+        for j in range(7):
+            patch = image[i * 256:i * 256 + 512, j * 256:j * 256 + 512, :]
+            stack[counter] = patch
+            counter += 1
+    return stack
+
+
+def get_patches_augmented(image):
     stack = np.zeros((35 * 8, 512, 512, 3), dtype=np.uint8)
     counter = 0
     for i in range(5):
@@ -74,14 +99,15 @@ def get_patches(image):
 
 for c in classes:
     for i in range(100):
-        filename = prefixes[c] + i2str(i + 1) + '_normalized.tif'
+        filename = prefixes[c] + i2str(i + 1) + '_normalized.png'
         print('Doing Image {}'.format(filename))
         path = os.path.join(data_dir, c, filename)
         image = read_image(path)
 
         patches = get_patches(image)
 
-        save_filename = prefixes[c] + i2str(i + 1) + '_patches.npy'
-        save_path = os.path.join(os.getcwd(), 'patches', c, save_filename)
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        np.save(save_path, patches)
+        for j in range(8):
+            patch = patches[j]
+            save_filename = prefixes[c] + i2str(i + 1) + '_patch' + i2str(j + 1) + '.png'
+            save_path = os.path.join(save_dir, 'patches', c, save_filename)
+            save_aspng(patch, save_path, compression=1)
