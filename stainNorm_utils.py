@@ -24,14 +24,15 @@ def normalize_columns(A):
     """
     return A / np.linalg.norm(A, axis=0)
 
+
 def read_image(path):
     """
     Read an image and output as uint8 RGB (not BGR!!)
     :param path:
     :return:
     """
-    im=cv.imread(path)
-    return cv.cvtColor(im,cv.COLOR_BGR2RGB)
+    im = cv.imread(path)
+    return cv.cvtColor(im, cv.COLOR_BGR2RGB)
 
 
 def normalize_Reinhard(patch, targetImg):
