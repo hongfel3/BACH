@@ -4,7 +4,7 @@ height = 512
 width = 512
 
 
-def read_and_decode(filename_queue):
+def read_and_decode(filename_queue, mean):
     reader = tf.TFRecordReader()
 
     _, serialized_example = reader.read(filename_queue)
@@ -18,6 +18,8 @@ def read_and_decode(filename_queue):
     label = tf.cast(features['label'], tf.int32)
 
     image = tf.reshape(image, [height, width, 3])
+
+    image -= mean
 
     # Transformations can be put here.
 
