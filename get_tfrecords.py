@@ -32,6 +32,7 @@ writer = tf.python_io.TFRecordWriter(tfrecords_filename)
 
 for c in classes:
     for i in perm[0:80]:
+        print('Doing image {}'.format(i))
         for j in range(35):
             path = os.path.join(data_dir, c, prefixes[c] + mu.i2str(i + 1) + '_patch' + mu.i2str(j + 1) + '.png')
             image = mu.read_image(path)
@@ -59,6 +60,7 @@ writer = tf.python_io.TFRecordWriter(tfrecords_filename)
 
 for c in classes:
     for i in perm[80:]:
+        print('Doing image {}'.format(i))
         for j in range(35):
             path = os.path.join(data_dir, c, prefixes[c] + mu.i2str(i + 1) + '_patch' + mu.i2str(j + 1) + '.png')
             image = mu.read_image(path)
