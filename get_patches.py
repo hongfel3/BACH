@@ -1,6 +1,7 @@
 import numpy as np
 import cv2 as cv
 import os
+import misc_utils as mu
 
 data_dir = '/home/peter/datasets/BACH_normalized'
 save_dir = '/home/peter/datasets/BACH_patches'
@@ -70,15 +71,15 @@ def get_patches_augmented(image):
 
 for c in classes:
     for i in range(100):
-        filename = prefixes[c] + i2str(i + 1) + '_normalized.png'
+        filename = prefixes[c] + mu.i2str(i + 1) + '_normalized.png'
         print('Doing Image {}'.format(filename))
         path = os.path.join(data_dir, c, filename)
-        image = read_image(path)
+        image = mu.read_image(path)
 
         patches = get_patches(image)
 
         for j in range(35):
             patch = patches[j]
-            save_filename = prefixes[c] + i2str(i + 1) + '_patch' + i2str(j + 1) + '.png'
+            save_filename = prefixes[c] + mu.i2str(i + 1) + '_patch' + mu.i2str(j + 1) + '.png'
             save_path = os.path.join(save_dir, c, save_filename)
-            save_aspng(patch, save_path, compression=1)
+            mu.save_aspng(patch, save_path, compression=1)
