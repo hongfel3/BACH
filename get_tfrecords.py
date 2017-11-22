@@ -1,7 +1,7 @@
+import numpy as np
 import misc_utils as mu
 import tensorflow as tf
 import os
-import numpy as np
 
 data_dir = '/home/peter/datasets/BACH_patches'
 save_dir = 'home/peter/datasets/BACH_tfrecords'
