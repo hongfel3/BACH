@@ -21,65 +21,61 @@ def _int64_feature(value):
 
 ###
 
-perm=np.random.permutation(100)
+perm1 = np.random.permutation(100)
 
-###
-
-tfrecords_filename = os.path.join(save_dir,'training.tfrecords')
+tfrecords_filename = os.path.join(save_dir, 'training.tfrecords')
 os.makedirs(os.path.dirname(tfrecords_filename), exist_ok=True)
+
+file_names = []
+file_labels = []
+
+for c in classes:
+    for i in perm1[0:80]:
+        for j in range(35):
+            file_names.append(
+                os.path.join(data_dir, c, prefixes[c] + mu.i2str(i + 1) + '_patch' + mu.i2str(j + 1) + '.png'))
+            file_labels.append(labels[c])
+
+total = 4 * 80 * 35
+stop = int(0.75 * total)
+perm2 = np.random.permutation(total)
 
 writer = tf.python_io.TFRecordWriter(tfrecords_filename)
 
-for c in classes:
-    for i in perm[0:60]:
-        for j in range(35):
-            path = os.path.join(data_dir, c, prefixes[c] + mu.i2str(i + 1) + '_patch' + mu.i2str(j + 1) + '.png')
-            print('Doing image {}'.format(path))
-            image = mu.read_image(path)
+for i in perm2[0:stop]:
+    image = mu.read_image(file_names[i])
 
-            height, width, _ = image.shape
+    image_raw = image.tostring()
 
-            image_raw = image.tostring()
+    example = tf.train.Example(features=tf.train.Features(feature={
+        'image_raw': _bytes_feature(image_raw),
+        'label': _int64_feature(file_labels[i])}))
 
-            example = tf.train.Example(features=tf.train.Features(feature={
-                'height': _int64_feature(height),
-                'width': _int64_feature(width),
-                'image_raw': _bytes_feature(image_raw),
-                'label': _int64_feature(labels[c])}))
-
-            writer.write(example.SerializeToString())
+    writer.write(example.SerializeToString())
 
 writer.close()
 
 ###
 
-tfrecords_filename = os.path.join(save_dir,'valid.tfrecords')
+tfrecords_filename = os.path.join(save_dir, 'valid.tfrecords')
 os.makedirs(os.path.dirname(tfrecords_filename), exist_ok=True)
 
 writer = tf.python_io.TFRecordWriter(tfrecords_filename)
 
-for c in classes:
-    for i in perm[60:80]:
-        for j in range(35):
-            path = os.path.join(data_dir, c, prefixes[c] + mu.i2str(i + 1) + '_patch' + mu.i2str(j + 1) + '.png')
-            print('Doing image {}'.format(path))
-            image = mu.read_image(path)
+for i in perm2[stop:]:
+    image = mu.read_image(file_names[i])
 
-            height, width, _ = image.shape
+    image_raw = image.tostring()
 
-            image_raw = image.tostring()
+    example = tf.train.Example(features=tf.train.Features(feature={
+        'image_raw': _bytes_feature(image_raw),
+        'label': _int64_feature(file_labels[i])}))
 
-            example = tf.train.Example(features=tf.train.Features(feature={
-                'height': _int64_feature(height),
-                'width': _int64_feature(width),
-                'image_raw': _bytes_feature(image_raw),
-                'label': _int64_feature(labels[c])}))
-
-            writer.write(example.SerializeToString())
+    writer.write(example.SerializeToString())
 
 writer.close()
 
 ###
 
-test_index=perm[80:100]
-np.save('./testing_indicies.npy',test_index)
+test_index = perm1[80:100]
+np.save('./testing_indicies.npy', test_index)
