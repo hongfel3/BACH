@@ -26,6 +26,7 @@ perm=np.random.permutation(100)
 ###
 
 tfrecords_filename = os.path.join(save_dir,'training.tfrecords')
+os.makedirs(os.path.dirname(tfrecords_filename), exist_ok=True)
 
 writer = tf.python_io.TFRecordWriter(tfrecords_filename)
 
@@ -52,6 +53,7 @@ writer.close()
 ###
 
 tfrecords_filename = os.path.join(save_dir,'testing.tfrecords')
+os.makedirs(os.path.dirname(tfrecords_filename), exist_ok=True)
 
 writer = tf.python_io.TFRecordWriter(tfrecords_filename)
 
