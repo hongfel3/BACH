@@ -20,16 +20,15 @@ def read_and_decode(filename_queue):
 
     height = tf.cast(features['height'], tf.int32)
     width = tf.cast(features['width'], tf.int32)
-    image_shape = tf.stack([height, width, 3])
-    image = tf.reshape(image, image_shape)
+    image = tf.reshape(image, (height, width, 3))
 
     # Transformations can be put here.
 
 
     images, labels = tf.train.shuffle_batch([image, label],
-                                                 batch_size=16,
-                                                 capacity=30,
-                                                 num_threads=2,
-                                                 min_after_dequeue=10)
+                                            batch_size=16,
+                                            capacity=30,
+                                            num_threads=2,
+                                            min_after_dequeue=10)
 
     return images, labels
