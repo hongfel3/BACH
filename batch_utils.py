@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-height=512
-width=512
+height = 512
+width = 512
 
 
 def read_and_decode(filename_queue):
@@ -14,6 +14,7 @@ def read_and_decode(filename_queue):
                                                                      })
 
     image = tf.decode_raw(features['image_raw'], tf.uint8)
+    image = tf.cast(image, tf.float32)
     label = tf.cast(features['label'], tf.int32)
 
     image = tf.reshape(image, [height, width, 3])
