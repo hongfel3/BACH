@@ -25,10 +25,7 @@ def read_and_decode(filename_queue):
     # Transformations can be put here.
 
 
-    images, labels = tf.train.shuffle_batch([image, label],
-                                            batch_size=16,
-                                            capacity=30,
-                                            num_threads=2,
+    images, labels = tf.train.shuffle_batch([image, label], batch_size=16, capacity=30, num_threads=2,
                                             min_after_dequeue=10)
 
     return images, labels
