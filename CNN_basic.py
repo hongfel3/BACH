@@ -20,7 +20,6 @@ lr = 1e-3
 
 ######
 
-tf.reset_default_graph()
 x = tf.placeholder(tf.float32, [None, 512, 512, 3])
 y = tf.placeholder(tf.uint8, [None, 4])
 training = tf.placeholder(tf.bool, name='train')
