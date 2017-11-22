@@ -40,7 +40,7 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Check we can get 100% accuracy on training set!
-for i in range(10):
+for i in range(20):
     print('i={}'.format(i))
     sess.run(train_step, feed_dict={x: X, y: Y, training: True})
 
