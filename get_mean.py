@@ -23,7 +23,7 @@ for f in full:
 
 mean /= len(full)
 
-mean = np.reshape(mean, (-1, 3))
-mean = np.mean(mean, axis=0)
+# mean = np.reshape(mean, (-1, 3))
+# mean = np.mean(mean, axis=0)
 
-print(mean)
+np.save('mean.npy',mean)
