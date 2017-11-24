@@ -4,6 +4,17 @@ from torch.autograd import Variable
 from torchvision import transforms, datasets
 
 from utils import my_transforms
+import numpy as np
+
+###
+
+lr = 1e-3
+
+###
+
+mean = np.load('mean.npy')
+trans = transforms.ToTensor()
+mean = trans(mean)
 
 ###
 
@@ -11,16 +22,26 @@ data_transform = transforms.Compose([
     my_transforms.RandomRot(),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
-    transforms.Normalize(mean=[180.19, 159.39, 223.15],
-                         std=[1.0, 1.0, 1.0])
+    my_transforms.Mean_subtract(mean)
 ])
 
 ###
 
+data_dir_mini = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set'
+dataset_mini = datasets.ImageFolder(root=data_dir_mini, transform=data_transform)
+mini_loader = torch.utils.data.DataLoader(dataset_mini, batch_size=16, shuffle=True)
 
-data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set'
-dataset = datasets.ImageFolder(root=data_dir, transform=data_transform)
-dataset_loader = torch.utils.data.DataLoader(dataset, batch_size=10, shuffle=True)
+
+###
+
+# data_dir_train = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set'
+# data_dir_val = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set'
+
+# dataset_train = datasets.ImageFolder(root=data_dir_train, transform=data_transform)
+# train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=32, shuffle=True)
+
+# dataset_val = datasets.ImageFolder(root=data_dir_val, transform=data_transform)
+# val_loader = torch.utils.data.DataLoader(dataset_val, batch_size=16, shuffle=True)
 
 
 ###
@@ -32,7 +53,7 @@ def conv3x3(inputs, outputs, pad, mp):
         pad = 1
     layer = nn.Sequential(
         nn.Conv2d(inputs, outputs, kernel_size=3, stride=1, padding=pad),
-        nn.BatchNorm2d(outputs),
+        nn.BatchNorm2d(outputs, momentum=0.9),
         nn.ReLU(),
         nn.MaxPool2d(kernel_size=mp, stride=mp))
     return layer
@@ -41,7 +62,7 @@ def conv3x3(inputs, outputs, pad, mp):
 def dense(inputs, outputs):
     layer = nn.Sequential(
         nn.Linear(inputs, outputs),
-        nn.BatchNorm1d(outputs),
+        nn.BatchNorm1d(outputs, momentum=0.9),
         nn.ReLU(),
         nn.Dropout())
     return layer
@@ -82,9 +103,57 @@ class NW(nn.Module):
 
 network = NW()
 
-num_epochs = 1
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(network.parameters(), lr=lr)
+
+loss_train = []
+loss_eval = []
+acc = []
+
+num_epochs = 10
 for epoch in range(num_epochs):
-    for i, (images, labels) in enumerate(dataset_loader):
+
+    print('Epoch {}'.format(epoch))
+    network.train()
+    cnt = 0
+    losses = 0.0
+    for i, (images, labels) in enumerate(mini_loader):
+        print('Training batch {}'.format(i))
         images = Variable(images)
-        x = network(images)
-        print(x.size())
+        labels = Variable(labels)
+        optimizer.zero_grad()
+        output = network(images)
+        loss = criterion(output, labels)
+        loss += loss
+        loss.backward()
+        optimizer.step()
+        cnt += 1
+    loss_train.append(losses / cnt)
+
+    print('Validation Acc')
+    network.eval()
+    total = 0
+    correct = 0
+    cnt = 0
+    losses = 0.0
+    for images, labels in mini_loader:
+        images = Variable(images)
+        labels = Variable(labels)
+        output = network(images)
+        loss = criterion(output, labels)
+        losses += loss
+        _, predicted = torch.max(output.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels.data).sum()
+        cnt += 1
+    accuracy = 100 * correct / total
+    print(accuracy)
+    acc.append(accuracy)
+    loss_eval.append(losses / cnt)
+
+    print('Saving model Params')
+    torch.save(network.state_dict(), 'nw' + str(epoch) + '.pkl')
+
+print(loss_train)
+print(loss_eval)
+print(acc)
