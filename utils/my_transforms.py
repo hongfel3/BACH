@@ -1,10 +1,4 @@
 import random
-import numpy as np
-from torchvision import transforms
-
-mean = np.load('../mean.npy')
-trans = transforms.ToTensor()
-mean = trans(mean)
 
 
 class RandomRot(object):
@@ -15,6 +9,9 @@ class RandomRot(object):
 
 
 class Mean_subtract(object):
+    def __init__(self, mean):
+        self.mean = mean
+
     def __call__(self, image):
-        image -= mean
+        image -= self.mean
         return image
