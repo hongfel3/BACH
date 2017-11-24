@@ -8,7 +8,8 @@ from utils import misc_utils as mu
 
 bs = 16
 
-train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
+train_gen = keras.preprocessing.image.ImageDataGenerator()
+# train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
 train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
                                            target_size=(512, 512), batch_size=bs)
 
@@ -42,7 +43,7 @@ for e in range(num_epochs):
 
     print('Epoch {}'.format(e))
     for batch, (ims, labels) in enumerate(train_data):
-        if batch > train_data.n / bs:
+        if batch >= train_data.n / bs:
             break
         print('Batch number {}'.format(batch))
         sess.run(train_step, feed_dict={x: ims, y: labels, training: True})
@@ -50,7 +51,7 @@ for e in range(num_epochs):
     print('Val acc')
     acc = 0.0
     for batch, (ims, labels) in enumerate(train_data):
-        if batch > train_data.n / bs:
+        if batch >= train_data.n / bs:
             break
         acc += sess.run(accuracy, feed_dict={x: ims, y: labels, training: False})
     acc /= (batch + 1)
