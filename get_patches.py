@@ -4,82 +4,58 @@ import os
 import misc_utils as mu
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_normalized'
-save_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_patches'
+save_dir_train = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set'
+save_dir_val = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set'
+save_dir_test = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Test_set'
 
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
 
+perm = np.random.permutation(100)
+train_idx = perm[:60]
+val_idx = perm[60:80]
+test_idx = perm[80:]
 
-#############################################
 
-def get_patches(image):
-    stack = np.zeros((35, 512, 512, 3), dtype=np.uint8)
-    counter = 0
+###
+
+def get_patches(img, save_path_sub):
+    cnt = 1
     for i in range(5):
         for j in range(7):
-            patch = image[i * 256:i * 256 + 512, j * 256:j * 256 + 512, :]
-            stack[counter] = patch
-            counter += 1
-    return stack
+            patch = img[256 * i:256 * i + 512, 256 * j:256 * j + 512]
+            mu.save_aspng(patch, save_path_sub + '_patch' + mu.i2str(cnt) + '.png', compression=1)
+            cnt += 1
 
 
-def get_patches_augmented(image):
-    stack = np.zeros((35 * 8, 512, 512, 3), dtype=np.uint8)
-    counter = 0
-    for i in range(5):
-        for j in range(7):
-            patch = image[i * 256:i * 256 + 512, j * 256:j * 256 + 512, :]
-            stack[counter] = patch
-            counter += 1
-
-            patch_flip = cv.flip(patch, 1)
-            stack[counter] = patch_flip
-            counter += 1
-
-            m1 = cv.getRotationMatrix2D((256, 256), 90, 1)
-            rot1 = cv.warpAffine(patch, m1, (512, 512))
-            stack[counter] = rot1
-            counter += 1
-
-            rot1_flip = cv.flip(rot1, 1)
-            stack[counter] = rot1_flip
-            counter += 1
-
-            m2 = cv.getRotationMatrix2D((256, 256), 180, 1)
-            rot2 = cv.warpAffine(patch, m2, (512, 512))
-            stack[counter] = rot2
-            counter += 1
-
-            rot2_flip = cv.flip(rot2, 1)
-            stack[counter] = rot2_flip
-            counter += 1
-
-            m3 = cv.getRotationMatrix2D((256, 256), 270, 1)
-            rot3 = cv.warpAffine(patch, m3, (512, 512))
-            stack[counter] = rot3
-            counter += 1
-
-            rot3_flip = cv.flip(rot3, 1)
-            stack[counter] = rot3_flip
-            counter += 1
-
-    return stack
-
-
-#############################################
-
+###
 
 for c in classes:
-    for i in range(100):
+    for i in train_idx:
         filename = prefixes[c] + mu.i2str(i + 1) + '_normalized.png'
         print('Doing Image {}'.format(filename))
         path = os.path.join(data_dir, c, filename)
         image = mu.read_image(path)
 
-        patches = get_patches(image)
+        sub = os.path.join(save_dir_train, c, prefixes[c] + mu.i2str(i + 1))
+        get_patches(image, sub)
 
-        for j in range(35):
-            patch = patches[j]
-            save_filename = prefixes[c] + mu.i2str(i + 1) + '_patch' + mu.i2str(j + 1) + '.png'
-            save_path = os.path.join(save_dir, c, save_filename)
-            mu.save_aspng(patch, save_path, compression=1)
+for c in classes:
+    for i in val_idx:
+        filename = prefixes[c] + mu.i2str(i + 1) + '_normalized.png'
+        print('Doing Image {}'.format(filename))
+        path = os.path.join(data_dir, c, filename)
+        image = mu.read_image(path)
+
+        sub = os.path.join(save_dir_val, c, prefixes[c] + mu.i2str(i + 1))
+        get_patches(image, sub)
+
+for c in classes:
+    for i in test_idx:
+        filename = prefixes[c] + mu.i2str(i + 1) + '_normalized.png'
+        print('Doing Image {}'.format(filename))
+        path = os.path.join(data_dir, c, filename)
+        image = mu.read_image(path)
+
+        sub = os.path.join(save_dir_test, c, prefixes[c] + mu.i2str(i + 1))
+        mu.save_aspng(image, sub + '.png', compression=1)
