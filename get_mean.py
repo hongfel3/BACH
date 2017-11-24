@@ -24,4 +24,4 @@ mean /= len(full)
 mean = np.reshape(mean, (-1, 3))
 mean = np.mean(mean, axis=0)
 
-np.save('./mean.npy', mean)
+print(mean)
