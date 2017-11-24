@@ -16,10 +16,11 @@ for c in classes:
     full += glob.glob(sub)
 
 for f in full:
-    print(f)
-    mean += mu.read_image(f).astype(np.float32)
+    tmp = mu.read_image(f).astype(np.float32)
+    mean += tmp
 
-mean /= len(f)
+mean /= len(full)
+
 mean = np.reshape(mean, (-1, 3))
 mean = np.mean(mean, axis=0)
 
