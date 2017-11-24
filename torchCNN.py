@@ -3,10 +3,23 @@ import torch.nn as nn
 from torchvision import transforms, datasets
 from torch.autograd import Variable
 
-import numpy as np
+import my_transforms
+
+###
+
+data_transform = transforms.Compose([
+    my_transforms.RandomRot(),
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[180.19, 159.39, 223.15],
+                         std=[1.0, 1.0, 1.0])
+])
+
+###
+
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set'
-dataset = datasets.ImageFolder(root=data_dir, transform=transforms.ToTensor())
+dataset = datasets.ImageFolder(root=data_dir, transform=data_transform)
 dataset_loader = torch.utils.data.DataLoader(dataset, batch_size=10, shuffle=True)
 
 
