@@ -19,7 +19,8 @@ for f in full:
     print(f)
     mean += mu.read_image(f).astype(np.float32)
 
-mean=np.reshape(mean,(-1,3))
-mean = np.mean(mean,axis=0)
+mean /= len(f)
+mean = np.reshape(mean, (-1, 3))
+mean = np.mean(mean, axis=0)
 
 np.save('./mean.npy', mean)
