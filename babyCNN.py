@@ -3,7 +3,6 @@ from tensorflow.contrib import keras
 
 from utils import basic_networks
 from utils import misc_utils as mu
-import numpy as np
 
 ######
 
