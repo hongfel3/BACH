@@ -8,13 +8,14 @@ import numpy as np
 
 ###
 
+dtype = torch.FloatTensor
 lr = 1e-3
 
 ###
 
 mean = np.load('mean.npy')
 trans = transforms.ToTensor()
-mean = trans(mean)
+mean = trans(mean).type(dtype)
 
 ###
 
@@ -96,14 +97,16 @@ class NW(nn.Module):
         x = self.fc1(x)
         x = self.fc2(x)
         x = self.final(x)
-        return (x)
+        return x
 
 
 ###
 
 network = NW()
+if dtype == torch.cuda.FloatTensor:
+    network.cuda()
 
-criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss().type(dtype)
 optimizer = torch.optim.Adam(network.parameters(), lr=lr)
 
 loss_train = []
@@ -119,14 +122,15 @@ for epoch in range(num_epochs):
     losses = 0.0
     for i, (images, labels) in enumerate(mini_loader):
         print('Training batch {}'.format(i))
-        images = Variable(images)
-        labels = Variable(labels)
+        images = Variable(images.type(dtype))
+        labels = Variable(labels.type(dtype))
         optimizer.zero_grad()
         output = network(images)
         loss = criterion(output, labels)
-        loss += loss
         loss.backward()
         optimizer.step()
+
+        losses += loss
         cnt += 1
     loss_train.append(losses / cnt)
 
@@ -137,14 +141,16 @@ for epoch in range(num_epochs):
     cnt = 0
     losses = 0.0
     for images, labels in mini_loader:
-        images = Variable(images)
-        labels = Variable(labels)
+        images = Variable(images.type(dtype))
+        labels = Variable(labels.type(dtype))
         output = network(images)
-        loss = criterion(output, labels)
-        losses += loss
+
         _, predicted = torch.max(output.data, 1)
         total += labels.size(0)
         correct += (predicted == labels.data).sum()
+
+        loss = criterion(output, labels)
+        losses += loss
         cnt += 1
     accuracy = 100 * correct / total
     print(accuracy)
