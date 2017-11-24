@@ -2,9 +2,10 @@ import random
 import numpy as np
 from torchvision import transforms
 
-mean = np.load('mean.npy')
-trans=transforms.ToTensor()
-mean=trans(mean)
+mean = np.load('../mean.npy')
+trans = transforms.ToTensor()
+mean = trans(mean)
+
 
 class RandomRot(object):
     def __call__(self, image):
