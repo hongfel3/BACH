@@ -2,7 +2,13 @@ import cv2 as cv
 import os
 import random
 from skimage import transform
-import numpy as np
+
+
+def empty_dir(folder):
+    for file in os.listdir(folder):
+        file_path = os.path.join(folder, file)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
 
 
 def RandRot(im):
@@ -11,8 +17,8 @@ def RandRot(im):
     :param im:
     :return:
     """
-    rand=random.choice(range(4))
-    return transform.rotate(im,90*rand,preserve_range=True)
+    rand = random.choice(range(4))
+    return transform.rotate(im, 90 * rand, preserve_range=True)
 
 
 def read_image(path):
