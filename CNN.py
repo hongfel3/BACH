@@ -3,6 +3,7 @@ from tensorflow.contrib import keras
 
 from utils import basic_networks
 from utils import misc_utils as mu
+import os
 
 ######
 
@@ -49,10 +50,13 @@ tf.summary.scalar("Accuracy", accuracy)
 tf.summary.scalar("Loss", loss)
 summary_op = tf.summary.merge_all()
 
-writer_train = tf.summary.FileWriter('./log_train', graph=sess.graph)
-writer_val = tf.summary.FileWriter('./log_val', graph=sess.graph)
+os.makedirs(os.path.join(os.getcwd(),'log_train'), exist_ok=True)
+os.makedirs(os.path.join(os.getcwd(),'log_val'), exist_ok=True)
 mu.empty_dir('./log_train')
 mu.empty_dir('./log_val')
+writer_train = tf.summary.FileWriter('./log_train', graph=sess.graph)
+writer_val = tf.summary.FileWriter('./log_val', graph=sess.graph)
+
 
 cnt_train = 1
 cnt_val = 1
