@@ -1,20 +1,14 @@
 import tensorflow as tf
-import numpy as np
+from tensorflow.contrib import keras
 import basic_networks
 
 ######
 
-X = np.load('babyX.npy')
-Y = np.eye(4)[np.load('babyY.npy').reshape(-1)]
-N = np.shape(X)[0]
-sub = 10
-idx = np.random.choice(range(N), sub)
-X = X[idx]
-Y = Y[idx]
-X = X.astype(np.float32)
-X -= np.mean(X, axis=0)
+train_gen = keras.preprocessing.image.ImageDataGenerator()
+train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set',
+                                           target_size=(512, 512), batch_size=16)
 
-######
+#####
 
 lr = 1e-3
 
@@ -39,10 +33,9 @@ with tf.control_dependencies(update_ops):
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-# Check we can get 100% accuracy on training set!
-for i in range(20):
-    print('i={}'.format(i))
-    sess.run(train_step, feed_dict={x: X, y: Y, training: True})
-
-    if i % 2 == 0:
-        print(sess.run(accuracy, {x: X, y: Y, training: False}))
+i = 0
+for im, label in train_data:
+    print(label)
+    i+=1
+    if i==10:
+        break

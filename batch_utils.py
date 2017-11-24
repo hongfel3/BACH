@@ -4,7 +4,7 @@ height = 512
 width = 512
 
 
-def read_and_decode(filename_queue, mean):
+def read_and_decode(filename_queue):
     reader = tf.TFRecordReader()
 
     _, serialized_example = reader.read(filename_queue)
