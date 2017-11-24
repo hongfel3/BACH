@@ -42,7 +42,7 @@ with tf.control_dependencies(update_ops):
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-num_epochs = 20
+num_epochs = 50
 for e in range(num_epochs):
 
     print('Epoch {}'.format(e))
