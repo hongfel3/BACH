@@ -1,5 +1,6 @@
 General process:
 
+- Get dataset: https://iciar2018-challenge.grand-challenge.org/
 - Stain normalize (normalize_data.py)
-- get patches (get_patches.py)
-- run CNN (CNN.py)
+- Get patches (get_patches.py)
+- Run CNN (CNN.py)
