@@ -1,90 +1,77 @@
 import torch
 import torch.nn as nn
-
-
-class network(nn.Module):
-    def __init__(self):
-        super(network, self).__init__()
-
-
-
-
-
-####################
-
-import torch
-import torch.nn as nn
-import torchvision.datasets as dsets
-import torchvision.transforms as transforms
+from torchvision import transforms, datasets
 from torch.autograd import Variable
 
-# Hyper Parameters
-num_epochs = 5
-batch_size = 100
-learning_rate = 0.001
+import numpy as np
+
+data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set'
+dataset = datasets.ImageFolder(root=data_dir, transform=transforms.ToTensor())
+dataset_loader = torch.utils.data.DataLoader(dataset, batch_size=10, shuffle=True)
 
 
+###
+
+def conv3x3(inputs, outputs, pad, mp):
+    if pad == 'valid':
+        pad = 0
+    elif pad == 'same':
+        pad = 1
+    layer = nn.Sequential(
+        nn.Conv2d(inputs, outputs, kernel_size=3, stride=1, padding=pad),
+        nn.BatchNorm2d(outputs),
+        nn.ReLU(),
+        nn.MaxPool2d(kernel_size=mp, stride=mp))
+    return layer
 
 
-# CNN Model (2 conv layer)
-class CNN(nn.Module):
+def dense(inputs, outputs):
+    layer = nn.Sequential(
+        nn.Linear(inputs, outputs),
+        nn.BatchNorm1d(outputs),
+        nn.ReLU(),
+        nn.Dropout())
+    return layer
+
+
+def final(inputs, outputs):
+    return nn.Linear(inputs, outputs)
+
+
+###
+
+class NW(nn.Module):
     def __init__(self):
-        super(CNN, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 16, kernel_size=5, padding=2),
-            nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.MaxPool2d(2))
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(16, 32, kernel_size=5, padding=2),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(2))
-        self.fc = nn.Linear(7 * 7 * 32, 10)
+        super(NW, self).__init__()
+        self.conv1 = conv3x3(3, 16, 'valid', 3)
+        self.conv2 = conv3x3(16, 32, 'valid', 2)
+        self.conv3 = conv3x3(32, 64, 'same', 2)
+        self.conv4 = conv3x3(64, 64, 'same', 3)
+        self.conv5 = conv3x3(64, 32, 'valid', 3)
+        self.fc1 = dense(512, 256)
+        self.fc2 = dense(256, 128)
+        self.final = final(128, 4)
 
     def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = out.view(out.size(0), -1)
-        out = self.fc(out)
-        return out
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = self.conv3(x)
+        x = self.conv4(x)
+        x = self.conv5(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc1(x)
+        x = self.fc2(x)
+        x = self.final(x)
+        return (x)
 
 
-cnn = CNN()
+###
 
-# Loss and Optimizer
-criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
+network = NW()
 
-# Train the Model
+num_epochs = 1
 for epoch in range(num_epochs):
-    for i, (images, labels) in enumerate(train_loader):
+    for i, (images, labels) in enumerate(dataset_loader):
         images = Variable(images)
-        labels = Variable(labels)
-
-        # Forward + Backward + Optimize
-        optimizer.zero_grad()
-        outputs = cnn(images)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-
-        if (i + 1) % 100 == 0:
-            print('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f'
-                  % (epoch + 1, num_epochs, i + 1, len(train_dataset) // batch_size, loss.data[0]))
-
-# Test the Model
-cnn.eval()  # Change model to 'eval' mode (BN uses moving mean/var).
-correct = 0
-total = 0
-for images, labels in test_loader:
-    images = Variable(images)
-    outputs = cnn(images)
-    _, predicted = torch.max(outputs.data, 1)
-    total += labels.size(0)
-    correct += (predicted == labels).sum()
-
-print('Test Accuracy of the model on the 10000 test images: %d %%' % (100 * correct / total))
-
-# Save the Trained Model
-torch.save(cnn.state_dict(), 'cnn.pkl')
+        x = network(images)
+        print(x.size())
