@@ -5,6 +5,11 @@ from skimage import transform
 
 
 def empty_dir(folder):
+    """
+    Empty folder
+    :param folder:
+    :return:
+    """
     for file in os.listdir(folder):
         file_path = os.path.join(folder, file)
         if os.path.isfile(file_path):

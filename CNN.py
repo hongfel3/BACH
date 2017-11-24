@@ -51,6 +51,8 @@ summary_op = tf.summary.merge_all()
 
 writer_train = tf.summary.FileWriter('./log_train', graph=sess.graph)
 writer_val = tf.summary.FileWriter('./log_val', graph=sess.graph)
+mu.empty_dir('./log_train')
+mu.empty_dir('./log_val')
 
 cnt_train = 1
 cnt_val = 1
