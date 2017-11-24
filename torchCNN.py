@@ -3,6 +3,9 @@ import torch.nn as nn
 
 
 class network(nn.Module):
+    def __init__(self):
+        super(network, self).__init__()
+
 
 
 
@@ -20,24 +23,7 @@ num_epochs = 5
 batch_size = 100
 learning_rate = 0.001
 
-# MNIST Dataset
-train_dataset = dsets.MNIST(root='./data/',
-                            train=True,
-                            transform=transforms.ToTensor(),
-                            download=True)
 
-test_dataset = dsets.MNIST(root='./data/',
-                           train=False,
-                           transform=transforms.ToTensor())
-
-# Data Loader (Input Pipeline)
-train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
-                                           batch_size=batch_size,
-                                           shuffle=True)
-
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
-                                          batch_size=batch_size,
-                                          shuffle=False)
 
 
 # CNN Model (2 conv layer)
