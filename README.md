@@ -1,6 +1,5 @@
 General process:
 
-- Stain normalize
-- get patches
-- get mean
-- run CNN
+- Stain normalize (normalize_data.py)
+- get patches (get_patches.py)
+- run CNN (CNN.py)
