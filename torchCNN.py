@@ -123,7 +123,7 @@ for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(mini_loader):
         print('Training batch {}'.format(i))
         images = Variable(images.type(dtype))
-        labels = Variable(labels.type(dtype))
+        labels = Variable(labels.type(dtype).long())
         optimizer.zero_grad()
         output = network(images)
         loss = criterion(output, labels)
@@ -142,7 +142,7 @@ for epoch in range(num_epochs):
     losses = 0.0
     for images, labels in mini_loader:
         images = Variable(images.type(dtype))
-        labels = Variable(labels.type(dtype))
+        labels = Variable(labels.type(dtype).long())
         output = network(images)
 
         _, predicted = torch.max(output.data, 1)
