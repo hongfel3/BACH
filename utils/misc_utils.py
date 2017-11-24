@@ -1,5 +1,18 @@
 import cv2 as cv
 import os
+import random
+from skimage import transform
+import numpy as np
+
+
+def RandRot(im):
+    """
+    Random rotation
+    :param im:
+    :return:
+    """
+    rand=random.choice(range(4))
+    return transform.rotate(im,90*rand,preserve_range=True)
 
 
 def read_image(path):

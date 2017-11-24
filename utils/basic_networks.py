@@ -34,7 +34,7 @@ def dense(x, scope, num_out):
 
 
 def basic_CNN(x, training):
-    l0 = tf.layers.batch_normalization(x, scale=True, center=True, name='bn', train=training, momentum=0.9)
+    l0 = tf.layers.batch_normalization(x, scale=True, center=True, name='bn', training=training, momentum=0.9)
     l1 = conv_relu3x3(l0, 'conv1', 16, train=training)
     l2 = max_pool3x3(l1)
     l3 = conv_relu3x3(l2, 'conv2', 32, train=training)
