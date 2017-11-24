@@ -1,7 +1,9 @@
-import numpy as np
-import misc_utils as mu
-import tensorflow as tf
 import os
+
+import numpy as np
+import tensorflow as tf
+
+from utils import misc_utils as mu
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_patches'
 save_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_tfrecords'

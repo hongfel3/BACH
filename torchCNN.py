@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
-from torchvision import transforms, datasets
 from torch.autograd import Variable
+from torchvision import transforms, datasets
 
-import my_transforms
+from utils import my_transforms
 
 ###
 

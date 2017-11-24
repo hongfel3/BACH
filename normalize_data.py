@@ -1,6 +1,8 @@
 import os
-import stainNorm_utils as stain
-import misc_utils as mu
+
+from utils import stainNorm_utils as stain
+
+from utils import misc_utils as mu
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Photos'
 save_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_normalized'

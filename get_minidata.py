@@ -1,6 +1,6 @@
-import numpy as np
 import os
-import misc_utils as mu
+
+from utils import misc_utils as mu
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_normalized'
 save_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set'

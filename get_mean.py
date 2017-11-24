@@ -1,7 +1,9 @@
-import numpy as np
-import os
-import misc_utils as mu
 import glob
+import os
+
+import numpy as np
+
+from utils import misc_utils as mu
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set'
 
