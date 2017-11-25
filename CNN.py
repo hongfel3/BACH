@@ -6,26 +6,30 @@ from utils import misc_utils as mu
 
 ######
 
-bs = 16
+bs = 16 # batch size
+
+lr = 1e-3 # learning rate
+
+######
 
 # train_gen = keras.preprocessing.image.ImageDataGenerator()
 # # train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
 # train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
 #                                            target_size=(512, 512), batch_size=bs)
 
+# training data
 train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
 train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set',
                                            target_size=(512, 512), batch_size=bs)
 
+# validation data
 val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
 val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set',
                                            target_size=(512, 512), batch_size=bs)
 
-#####
-
-lr = 1e-3
-
 ######
+
+# Build network
 
 x = tf.placeholder(tf.float32, [None, 512, 512, 3])
 y = tf.placeholder(tf.uint8, [None, 4])
@@ -42,13 +46,15 @@ with tf.control_dependencies(update_ops):
 
 ######
 
+# Run
+
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
+# Log the accuracy and loss
 tf.summary.scalar("Accuracy", accuracy)
 tf.summary.scalar("Loss", loss)
 summary_op = tf.summary.merge_all()
-
 mu.build_empty_dir('log_train')
 mu.build_empty_dir('log_val')
 writer_train = tf.summary.FileWriter('./log_train', graph=sess.graph)
@@ -60,6 +66,7 @@ cnt_val = 1
 num_epochs = 100
 for e in range(num_epochs):
 
+    # train
     print('Epoch {}'.format(e))
     for batch, (ims, labels) in enumerate(train_data):
         if batch >= train_data.n / bs:
@@ -69,6 +76,7 @@ for e in range(num_epochs):
         writer_train.add_summary(summary, cnt_train)
         cnt_train += 1
 
+    # validation
     print('Validation')
     acc = 0.0
     for batch, (ims, labels) in enumerate(val_data):
