@@ -55,15 +55,16 @@ sess.run(tf.global_variables_initializer())
 tf.summary.scalar("Accuracy", accuracy)
 tf.summary.scalar("Loss", loss)
 summary_op = tf.summary.merge_all()
-mu.build_empty_dir('log_train')
-mu.build_empty_dir('log_val')
-writer_train = tf.summary.FileWriter('./log_train', graph=sess.graph)
-writer_val = tf.summary.FileWriter('./log_val', graph=sess.graph)
+mu.build_empty_dir('logs/train')
+mu.build_empty_dir('logs/val')
+writer_train = tf.summary.FileWriter('./logs/train', graph=sess.graph)
+writer_val = tf.summary.FileWriter('./logs/val', graph=sess.graph)
 
 cnt_train = 1
 cnt_val = 1
 num_epochs = 100
 print_every = 20
+mini = False
 for e in range(num_epochs):
 
     # train
@@ -77,6 +78,8 @@ for e in range(num_epochs):
         _, summary = sess.run([train_step, summary_op], feed_dict={x: ims, y: labels, training: True})
         writer_train.add_summary(summary, cnt_train)
         cnt_train += 1
+        if mini == True:
+            break
 
     # validation
     print('Validation')
@@ -89,3 +92,5 @@ for e in range(num_epochs):
         summary = sess.run(summary_op, feed_dict={x: ims, y: labels, training: False})
         writer_val.add_summary(summary, cnt_val)
         cnt_val += 1
+        if mini == True:
+            break
