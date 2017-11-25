@@ -83,7 +83,6 @@ for e in range(num_epochs):
 
     # validation
     print('Validation')
-    acc = 0.0
     for batch, (ims, labels) in enumerate(val_data):
         if batch >= val_data.n / bs:
             break
