@@ -1,10 +1,9 @@
 import os
-
 import numpy as np
-
 from utils import misc_utils as mu
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_normalized'
+
 save_dir_train = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set'
 save_dir_val = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set'
 save_dir_test = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Test_set'
