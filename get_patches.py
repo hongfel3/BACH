@@ -10,7 +10,6 @@ save_dir_val = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set'
 save_dir_test = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Test_set'
 save_dir_mini = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set'
 
-
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
 
