@@ -16,6 +16,17 @@ def empty_dir(folder):
             os.remove(file_path)
 
 
+def build_empty_dir(folder, root_dir=os.getcwd()):
+    """
+    Build (if required) and empty a directory
+    :param folder:
+    :param root_dir:
+    :return:
+    """
+    os.makedirs(os.path.join(root_dir, folder), exist_ok=True)
+    empty_dir(os.path.join(root_dir, folder))
+
+
 def RandRot(im):
     """
     Random rotation
