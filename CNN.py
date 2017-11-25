@@ -6,9 +6,9 @@ from utils import misc_utils as mu
 
 ######
 
-bs = 16 # batch size
+bs = 16  # batch size
 
-lr = 1e-3 # learning rate
+lr = 1e-3  # learning rate
 
 ######
 
@@ -25,7 +25,7 @@ train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_
 # validation data
 val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
 val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set',
-                                           target_size=(512, 512), batch_size=bs)
+                                       target_size=(512, 512), batch_size=bs)
 
 ######
 
@@ -60,18 +60,20 @@ mu.build_empty_dir('log_val')
 writer_train = tf.summary.FileWriter('./log_train', graph=sess.graph)
 writer_val = tf.summary.FileWriter('./log_val', graph=sess.graph)
 
-
 cnt_train = 1
 cnt_val = 1
 num_epochs = 100
+print_every = 20
 for e in range(num_epochs):
 
     # train
     print('Epoch {}'.format(e))
+    print('Training')
     for batch, (ims, labels) in enumerate(train_data):
         if batch >= train_data.n / bs:
             break
-        print('Batch number {}'.format(batch))
+        if batch % print_every == 0:
+            print('Batch number {}'.format(batch))
         _, summary = sess.run([train_step, summary_op], feed_dict={x: ims, y: labels, training: True})
         writer_train.add_summary(summary, cnt_train)
         cnt_train += 1
@@ -82,6 +84,8 @@ for e in range(num_epochs):
     for batch, (ims, labels) in enumerate(val_data):
         if batch >= val_data.n / bs:
             break
+        if batch % print_every == 0:
+            print('Batch number {}'.format(batch))
         summary = sess.run(summary_op, feed_dict={x: ims, y: labels, training: False})
         writer_val.add_summary(summary, cnt_val)
         cnt_val += 1
