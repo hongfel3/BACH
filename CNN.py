@@ -69,6 +69,11 @@ mu.build_empty_dir('logs/val')
 writer_train = tf.summary.FileWriter('./logs/train', graph=sess.graph)
 writer_val = tf.summary.FileWriter('./logs/val', graph=sess.graph)
 
+# Save model variables
+mu.build_empty_dir('saves')
+saver = tf.train.Saver()
+
+best_val_accuracy = 0.0
 num_epochs = 100
 print_every = 20
 mini = False
@@ -116,3 +121,7 @@ for e in range(num_epochs):
     mean_loss /= n
     summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
     writer_val.add_summary(summary, e + 1)
+    if mean_accuracy > best_val_accuracy:
+        best_val_accuracy = mean_accuracy
+        save_path = saver.save(sess, './saves/best_model.ckpt')
+        print("New best model saved in file: %s" % save_path)
