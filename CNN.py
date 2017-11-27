@@ -13,19 +13,26 @@ lr = 1e-3  # learning rate
 ######
 
 # train_gen = keras.preprocessing.image.ImageDataGenerator()
-# # train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-# train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
-#                                            target_size=(512, 512), batch_size=bs)
-
-# training data
 train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set',
+train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
                                            target_size=(512, 512), batch_size=bs)
 
 # validation data
 val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set',
+val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
                                        target_size=(512, 512), batch_size=bs)
+
+######
+
+# # training data
+# train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
+# train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set',
+#                                            target_size=(512, 512), batch_size=bs)
+#
+# # validation data
+# val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
+# val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set',
+#                                        target_size=(512, 512), batch_size=bs)
 
 ######
 
@@ -52,44 +59,56 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # Log the accuracy and loss
-tf.summary.scalar("Accuracy", accuracy)
-tf.summary.scalar("Loss", loss)
+accuracy_placeholder = tf.placeholder(tf.float32, ())
+loss_placeholder = tf.placeholder(tf.float32, ())
+tf.summary.scalar("Accuracy", accuracy_placeholder)
+tf.summary.scalar("Loss", loss_placeholder)
 summary_op = tf.summary.merge_all()
 mu.build_empty_dir('logs/train')
 mu.build_empty_dir('logs/val')
 writer_train = tf.summary.FileWriter('./logs/train', graph=sess.graph)
 writer_val = tf.summary.FileWriter('./logs/val', graph=sess.graph)
 
-cnt_train = 1
-cnt_val = 1
 num_epochs = 100
 print_every = 20
-mini = False
 for e in range(num_epochs):
 
+    n = 0
+    mean_accuracy = 0.0
+    mean_loss = 0.0
     # train
     print('Epoch {}'.format(e))
     print('Training')
     for batch, (ims, labels) in enumerate(train_data):
+        print(ims.shape[0])
         if batch >= train_data.n / bs:
             break
+        n += ims.shape[0]
         if batch % print_every == 0:
             print('Batch number {}'.format(batch))
-        _, summary = sess.run([train_step, summary_op], feed_dict={x: ims, y: labels, training: True})
-        writer_train.add_summary(summary, cnt_train)
-        cnt_train += 1
-        if mini == True:
-            break
+        _, temp1, temp2 = sess.run([train_step, accuracy, loss], feed_dict={x: ims, y: labels, training: True})
+        mean_accuracy += temp1
+        mean_loss += temp2
+    mean_accuracy /= n
+    mean_loss /= n
+    summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
+    writer_train.add_summary(summary, e + 1)
 
+    n = 0
+    mean_accuracy = 0.0
+    mean_loss = 0.0
     # validation
     print('Validation')
     for batch, (ims, labels) in enumerate(val_data):
         if batch >= val_data.n / bs:
             break
+        n += ims.shape[0]
         if batch % print_every == 0:
             print('Batch number {}'.format(batch))
-        summary = sess.run(summary_op, feed_dict={x: ims, y: labels, training: False})
-        writer_val.add_summary(summary, cnt_val)
-        cnt_val += 1
-        if mini == True:
-            break
+        temp1, temp2 = sess.run([accuracy, loss], feed_dict={x: ims, y: labels, training: False})
+        mean_accuracy += temp1
+        mean_loss += temp2
+    mean_accuracy /= n
+    mean_loss /= n
+    summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
+    writer_val.add_summary(summary, e + 1)
