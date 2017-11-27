@@ -6,33 +6,33 @@ from utils import misc_utils as mu
 
 ######
 
-bs = 16  # batch size
+bs = 64  # batch size
 
 lr = 1e-3  # learning rate
 
 ######
 
+# # train_gen = keras.preprocessing.image.ImageDataGenerator()
 # train_gen = keras.preprocessing.image.ImageDataGenerator()
+# train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
+#                                            target_size=(512, 512), batch_size=bs)
+#
+# # validation data
+# val_gen = keras.preprocessing.image.ImageDataGenerator()
+# val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
+#                                        target_size=(512, 512), batch_size=bs)
+
+######
+
+# training data
 train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
+train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set',
                                            target_size=(512, 512), batch_size=bs)
 
 # validation data
 val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
+val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set',
                                        target_size=(512, 512), batch_size=bs)
-
-######
-
-# # training data
-# train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-# train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set',
-#                                            target_size=(512, 512), batch_size=bs)
-#
-# # validation data
-# val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-# val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set',
-#                                        target_size=(512, 512), batch_size=bs)
 
 ######
 
@@ -40,7 +40,7 @@ val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Chal
 
 x = tf.placeholder(tf.float32, [None, 512, 512, 3])
 y = tf.placeholder(tf.uint8, [None, 4])
-training = tf.placeholder(tf.bool, name='train')
+training = tf.placeholder(tf.bool)
 
 out = basic_networks.basic_CNN(x, training=training)
 
@@ -71,6 +71,7 @@ writer_val = tf.summary.FileWriter('./logs/val', graph=sess.graph)
 
 num_epochs = 100
 print_every = 20
+mini = False
 for e in range(num_epochs):
 
     n = 0
@@ -80,15 +81,16 @@ for e in range(num_epochs):
     print('Epoch {}'.format(e))
     print('Training')
     for batch, (ims, labels) in enumerate(train_data):
-        print(ims.shape[0])
         if batch >= train_data.n / bs:
             break
-        n += ims.shape[0]
         if batch % print_every == 0:
             print('Batch number {}'.format(batch))
         _, temp1, temp2 = sess.run([train_step, accuracy, loss], feed_dict={x: ims, y: labels, training: True})
+        n += ims.shape[0]
         mean_accuracy += temp1
         mean_loss += temp2
+        if mini == True:
+            break
     mean_accuracy /= n
     mean_loss /= n
     summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
@@ -102,12 +104,14 @@ for e in range(num_epochs):
     for batch, (ims, labels) in enumerate(val_data):
         if batch >= val_data.n / bs:
             break
-        n += ims.shape[0]
         if batch % print_every == 0:
             print('Batch number {}'.format(batch))
         temp1, temp2 = sess.run([accuracy, loss], feed_dict={x: ims, y: labels, training: False})
+        n += ims.shape[0]
         mean_accuracy += temp1
         mean_loss += temp2
+        if mini == True:
+            break
     mean_accuracy /= n
     mean_loss /= n
     summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
