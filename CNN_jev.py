@@ -14,24 +14,24 @@ lr = 1e-3  # learning rate
 
 # # train_gen = keras.preprocessing.image.ImageDataGenerator()
 # train_gen = keras.preprocessing.image.ImageDataGenerator()
-# train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
+# train_data = train_gen.flow_from_directory('/home/jevjev/Peter_Byfield/ICIAR2018_BACH_Challenge/Mini_set',
 #                                            target_size=(512, 512), batch_size=bs)
 #
 # # validation data
 # val_gen = keras.preprocessing.image.ImageDataGenerator()
-# val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
+# val_data = val_gen.flow_from_directory('/home/jevjev/Peter_Byfield/ICIAR2018_BACH_Challenge/Mini_set',
 #                                        target_size=(512, 512), batch_size=bs)
 
 ######
 
 # training data
 train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set',
+train_data = train_gen.flow_from_directory('/home/jevjev/Peter_Byfield/ICIAR2018_BACH_Challenge/Train_set',
                                            target_size=(512, 512), batch_size=bs)
 
 # validation data
 val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-val_data = val_gen.flow_from_directory('/home/ICIAR2018_BACH_Challenge/Val_set',
+val_data = val_gen.flow_from_directory('/home/jevjev/Peter_Byfield/ICIAR2018_BACH_Challenge/Val_set',
                                        target_size=(512, 512), batch_size=bs)
 
 ######
