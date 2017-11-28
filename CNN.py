@@ -76,7 +76,6 @@ saver = tf.train.Saver()
 best_val_accuracy = 0.0
 num_epochs = 100
 print_every = 20
-mini = False
 for e in range(num_epochs):
 
     n1 = 0
@@ -96,8 +95,6 @@ for e in range(num_epochs):
         n2 += ims.shape[0]
         mean_accuracy += temp1
         mean_loss += temp2
-        if mini == True:
-            break
     mean_accuracy /= n1
     mean_loss /= n2
     summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
@@ -119,8 +116,6 @@ for e in range(num_epochs):
         n2 += ims.shape[0]
         mean_accuracy += temp1
         mean_loss += temp2
-        if mini == True:
-            break
     mean_accuracy /= n1
     mean_loss /= n2
     summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
