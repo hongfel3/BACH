@@ -35,7 +35,7 @@ elif mini == False:
                                                target_size=(512, 512), batch_size=bs)
 
     # validation data
-    val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
+    val_gen = keras.preprocessing.image.ImageDataGenerator()
     val_data = val_gen.flow_from_directory(os.path.join(root_dir,'Val_set'),
                                            target_size=(512, 512), batch_size=bs)
 
