@@ -15,7 +15,7 @@ lr = 1e-3  # learning rate
 mini = True
 if mini == True:
 
-    # train_gen = keras.preprocessing.image.ImageDataGenerator()
+    # training data
     train_gen = keras.preprocessing.image.ImageDataGenerator()
     train_data = train_gen.flow_from_directory('/home/jevjev/Peter_Byfield/ICIAR2018_BACH_Challenge/Mini_set',
                                                target_size=(512, 512), batch_size=bs)
