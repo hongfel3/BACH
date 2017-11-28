@@ -78,8 +78,6 @@ num_epochs = 100
 print_every = 20
 for e in range(num_epochs):
 
-    n1 = 0
-    n2 = 0
     mean_accuracy = 0.0
     mean_loss = 0.0
     # train
@@ -91,17 +89,13 @@ for e in range(num_epochs):
         if batch % print_every == 0:
             print('Batch number {}'.format(batch))
         _, temp1, temp2 = sess.run([train_step, accuracy, loss], feed_dict={x: ims, y: labels, training: True})
-        n1 += 1
-        n2 += ims.shape[0]
         mean_accuracy += temp1
         mean_loss += temp2
-    mean_accuracy /= n1
-    mean_loss /= n2
+    mean_accuracy /= batch
+    mean_loss /= batch
     summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
     writer_train.add_summary(summary, e + 1)
 
-    n1 = 0
-    n2 = 0
     mean_accuracy = 0.0
     mean_loss = 0.0
     # validation
@@ -112,12 +106,10 @@ for e in range(num_epochs):
         if batch % print_every == 0:
             print('Batch number {}'.format(batch))
         temp1, temp2 = sess.run([accuracy, loss], feed_dict={x: ims, y: labels, training: False})
-        n1 += 1
-        n2 += ims.shape[0]
         mean_accuracy += temp1
         mean_loss += temp2
-    mean_accuracy /= n1
-    mean_loss /= n2
+    mean_accuracy /= batch
+    mean_loss /= batch
     summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
     writer_val.add_summary(summary, e + 1)
     if mean_accuracy > best_val_accuracy:
