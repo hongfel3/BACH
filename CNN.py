@@ -3,6 +3,7 @@ from tensorflow.contrib import keras
 
 from utils import basic_networks
 from utils import misc_utils as mu
+import os
 
 ######
 
@@ -12,26 +13,28 @@ lr = 1e-3  # learning rate
 
 ######
 
+root_dir='/home/peter/datasets/ICIAR2018_BACH_Challenge'
 mini = True
+
 if mini == True:
     # training data
     train_gen = keras.preprocessing.image.ImageDataGenerator()
-    train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
+    train_data = train_gen.flow_from_directory(os.path.join(root_dir,'Mini_set'),
                                                target_size=(512, 512), batch_size=bs)
 
     # validation data
     val_gen = keras.preprocessing.image.ImageDataGenerator()
-    val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set',
+    val_data = val_gen.flow_from_directory(os.path.join(root_dir,'Mini_set'),
                                            target_size=(512, 512), batch_size=bs)
 elif mini == False:
     # training data
     train_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-    train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set',
+    train_data = train_gen.flow_from_directory(os.path.join(root_dir,'Train_set'),
                                                target_size=(512, 512), batch_size=bs)
 
     # validation data
     val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-    val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set',
+    val_data = val_gen.flow_from_directory(os.path.join(root_dir,'Val_set'),
                                            target_size=(512, 512), batch_size=bs)
 
 ######
