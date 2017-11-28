@@ -83,9 +83,9 @@ num_epochs = 100
 print_every = 20
 for e in range(num_epochs):
 
+    # train
     mean_accuracy = 0.0
     mean_loss = 0.0
-    # train
     print('Epoch {}'.format(e))
     print('Training')
     for batch, (ims, labels) in enumerate(train_data):
@@ -101,9 +101,9 @@ for e in range(num_epochs):
     summary = sess.run(summary_op, feed_dict={accuracy_placeholder: mean_accuracy, loss_placeholder: mean_loss})
     writer_train.add_summary(summary, e + 1)
 
+    # validation
     mean_accuracy = 0.0
     mean_loss = 0.0
-    # validation
     print('Validation')
     for batch, (ims, labels) in enumerate(val_data):
         if batch >= val_data.n / bs:
