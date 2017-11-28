@@ -13,7 +13,9 @@ lr = 1e-3  # learning rate
 
 ######
 
+# where is data stored?
 root_dir='/home/peter/datasets/ICIAR2018_BACH_Challenge'
+
 mini = True
 
 if mini == True:
