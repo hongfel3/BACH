@@ -31,7 +31,7 @@ train_data = train_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_
 
 # validation data
 val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-val_data = val_gen.flow_from_directory('/home/ICIAR2018_BACH_Challenge/Val_set',
+val_data = val_gen.flow_from_directory('/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set',
                                        target_size=(512, 512), batch_size=bs)
 
 ######
