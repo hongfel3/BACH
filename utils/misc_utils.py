@@ -6,7 +6,7 @@ from skimage import transform
 
 def empty_dir(folder):
     """
-    Empty folder
+    Empty a folder
     :param folder:
     :return:
     """
