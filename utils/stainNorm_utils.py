@@ -4,18 +4,6 @@ import cv2 as cv
 import numpy as np
 
 
-def float2uint8(x):
-    """
-    Converts a float (range 0-1 or 0-255) to a uint8
-    :param x:
-    :return:
-    """
-    if x.max() <= 1.0:
-        return (255.0 * x).astype(np.uint8)
-    else:
-        return x.astype(np.uint8)
-
-
 def normalize_columns(A):
     """
     Normalize columns of an array
@@ -25,15 +13,18 @@ def normalize_columns(A):
     return A / np.linalg.norm(A, axis=0)
 
 
-def read_image(path):
+def remove_white(I, thresh=0.9):
     """
-    Read an image and output as uint8 RGB (not BGR!!)
-    :param path:
+
+    :param I:
     :return:
     """
-    im = cv.imread(path)
-    return cv.cvtColor(im, cv.COLOR_BGR2RGB)
+    I_LAB = cv.cvtColor(I, cv.COLOR_RGB2LAB)
+    L = I_LAB[:, :, 0] / 255.0
+    return (L < thresh)
 
+
+#########################################################################
 
 def normalize_Reinhard(patch, targetImg):
     """
@@ -119,6 +110,7 @@ def normalize_Macenko(patch, targetImg, Io=255, beta=0.15, alpha=1, intensity_no
     :param intensity_norm:
     :return:
     """
+
     # Remove zeros
     mask = (patch == 0)
     patch[mask] = 1
@@ -177,12 +169,11 @@ def normalize_Macenko(patch, targetImg, Io=255, beta=0.15, alpha=1, intensity_no
     ### Modify concentrations ###
     if intensity_norm == True:
         maxC = np.percentile(C, 99, axis=1).reshape((3, 1))
-        maxC[2] = 1
-
+        # maxC[2] = 1
         Y_target = OD_target.T
         C_target = np.linalg.lstsq(HE_target, Y_target)[0]
         maxC_target = np.percentile(C_target, 99, axis=1).reshape((3, 1))
-        maxC_target[2] = 1
+        # maxC_target[2] = 1
 
         C = C * maxC_target / maxC
 

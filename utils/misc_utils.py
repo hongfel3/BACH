@@ -72,5 +72,6 @@ def save_aspng(im, full_save_path, compression=3):
     :return:
     """
     os.makedirs(os.path.dirname(full_save_path), exist_ok=True)
-    im = cv.cvtColor(im, cv.COLOR_RGB2BGR)
+    if len(im.shape) == 3:
+        im = cv.cvtColor(im, cv.COLOR_RGB2BGR)
     cv.imwrite(full_save_path, im, [cv.IMWRITE_PNG_COMPRESSION, compression])
