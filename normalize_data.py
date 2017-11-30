@@ -19,7 +19,7 @@ for c in classes:
         path = os.path.join(data_dir, c, filename)
         image = mu.read_image(path)
 
-        normal = stain.normalize_Macenko(image, target,beta=0.25)
+        normal = stain.normalize_Reinhard(image, target)
 
         save_filename = prefixes[c] + mu.i2str(i + 1) + '_normalized.png'
         save_path = os.path.join(save_dir, c, save_filename)
