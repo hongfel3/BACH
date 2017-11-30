@@ -10,7 +10,7 @@ save_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_normalized'
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
 
-target = mu.read_image(os.path.join(data_dir, 'Benign', 'b093.tif'))
+target = mu.read_image(os.path.join(data_dir, 'Benign', 'b027.tif'))
 
 for c in classes:
     for i in range(100):
