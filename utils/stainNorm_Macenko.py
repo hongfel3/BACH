@@ -89,7 +89,7 @@ def normalize_Macenko(patch, targetImg, Io=255, beta=0.15, alpha=1, intensity_no
     Y = OD.T
     C = np.linalg.lstsq(HE, Y)[0]
 
-    ### Modify concentrations? ###
+    ### Modify concentrations ###
     if intensity_norm == True:
         maxC = np.percentile(C, 99, axis=1).reshape((3, 1))
         maxC[2] = 1
