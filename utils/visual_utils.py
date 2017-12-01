@@ -2,7 +2,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def show(image, now=True, fig_size=(10,10)):
+def show_colors(C):
+    """
+    Shows rows of C as colors (RGB)
+    :param C:
+    :return:
+    """
+    n = C.shape[0]
+    for i in range(n):
+        if C[i].max()>1.0:
+            plt.plot([0, 1], [i, i], c=C[i]/255, linewidth=20)
+        else:
+            plt.plot([0, 1], [i, i], c=C[i], linewidth=20)
+        plt.axis('off')
+        plt.axis([0, 1, -1, n + 1])
+
+
+def show(image, now=True, fig_size=(10, 10)):
     """
     Show an image (np.array). Can be of shape HxWxC or flattened (if square).
     Caution! Rescales image to be in range [0,1]."
