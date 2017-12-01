@@ -1,9 +1,20 @@
 import cv2 as cv
 
 
-def notwhite_Mask(I, thresh=0.9):
+def remove_zeros(I):
     """
+    Remove zeros
+    :param I:
+    :return:
+    """
+    mask = (I == 0)
+    I[mask] = 1
+    return I
 
+
+def notwhite_mask(I, thresh=0.9):
+    """
+    Get a binary mask where true denotes 'not white'
     :param I:
     :param thresh:
     :return:
@@ -29,7 +40,7 @@ def sign(x):
 
 def enforce_rows_positive(X):
     """
-    Make rows positive if possible, else return an error.
+    Make rows positive if possible, else give an error.
     :param X:
     :return:
     """
