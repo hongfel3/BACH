@@ -4,26 +4,6 @@ import cv2 as cv
 import numpy as np
 
 
-def normalize_columns(A):
-    """
-    Normalize columns of an array
-    :param A:
-    :return:
-    """
-    return A / np.linalg.norm(A, axis=0)
-
-
-def notBackground_Mask(I, thresh=0.9):
-    """
-
-    :param I:
-    :return:
-    """
-    I_LAB = cv.cvtColor(I, cv.COLOR_RGB2LAB)
-    L = I_LAB[:, :, 0] / 255.0
-    return (L < thresh)
-
-
 #########################################################################
 
 def normalize_Reinhard(patch, targetImg):
@@ -87,5 +67,3 @@ def normalize_Reinhard(patch, targetImg):
     norm = cv.cvtColor(normLab, cv.COLOR_LAB2RGB)
 
     return norm
-
-
