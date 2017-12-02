@@ -1,10 +1,26 @@
+"""
+Uses the spams package:
+
+http://spams-devel.gforge.inria.fr/index.html
+
+Use with python via e.g https://anaconda.org/conda-forge/python-spams
+"""
+
 import cv2 as cv
 import numpy as np
-from sklearn.decomposition import DictionaryLearning
-from sklearn.linear_model import Lasso
+import spams
 
 
-# M0 = np.array([[0.60968958, 0.72542171, 0.31944007], [0.41556174, 0.83809855, 0.3534109]])
+def remove_zeros(I):
+    """
+    Remove zeros
+    :param I:
+    :return:
+    """
+    mask = (I == 0)
+    I[mask] = 1
+    return I
+
 
 def RGB_to_OD(I):
     """
@@ -22,7 +38,7 @@ def OD_to_RGB(OD):
     :param OD:
     :return:
     """
-    return 255 * np.exp(-1 * OD)
+    return (255 * np.exp(-1 * OD)).astype(np.uint8)
 
 
 def normalize_rows(A):
@@ -31,18 +47,7 @@ def normalize_rows(A):
     :param A:
     :return:
     """
-    return A / np.linalg.norm(A, axis=1)
-
-
-def remove_zeros(I):
-    """
-    Remove zeros
-    :param I:
-    :return:
-    """
-    mask = (I == 0)
-    I[mask] = 1
-    return I
+    return A / np.linalg.norm(A, axis=1)[:, None]
 
 
 def notwhite_mask(I, thresh=0.8):
@@ -88,9 +93,7 @@ def enforce_rows_positive(X):
     return X, True
 
 
-######################################################
-
-def get_stain_matrix(I, threshold=0.8, sub_sample=2000):
+def get_stain_matrix(I, threshold=0.8, sub_sample=10000):
     """
 
     :param I:
@@ -104,35 +107,33 @@ def get_stain_matrix(I, threshold=0.8, sub_sample=2000):
     n = OD.shape[0]
     if n > sub_sample:
         OD = OD[np.random.choice(range(n), sub_sample)]
-    dictionary_learner = DictionaryLearning(n_components=2, alpha=1, verbose=True)
-    done = False
-    while done == False:
-        dictionary_learner.fit(OD)
-        HE, done = enforce_rows_positive(dictionary_learner.components_)
-    if HE[0, 0] < HE[1, 0]:
-        HE = HE[[1, 0], :]
-    M = np.zeros((3, 3))
-    M[[0, 1], :] = HE
-    M[2] = np.cross(HE[0], HE[1])
-    M = normalize_rows(M)
-    return HE, M
+    dictionary = spams.trainDL(OD.T, K=2, lambda1=.1, mode=2, modeD=0, posAlpha=True, posD=True).T
+    print(dictionary.shape)
+    if dictionary[0, 0] < dictionary[1, 0]:
+        dictionary = dictionary[[1, 0], :]
+    dictionary = normalize_rows(dictionary)
+    return dictionary
 
 
-def get_H_channel(I):
+def get_coeffs(I, stain_matrix):
     """
 
     :param I:
+    :param stain_matrix:
     :return:
     """
-    M, _ = get_stain_matrix(I)
     OD = RGB_to_OD(I).reshape((-1, 3))
-    lasso = Lasso(alpha=1, positive=True)
-    lasso.fit(M.T,OD.T)
-    C = lasso.coef_
-    print(C.shape)
-    OD = np.matmul(C[:, 0].reshape((-1, 1)), M[0].reshape((1, 3)))
-    print(OD.min())
-    out = OD_to_RGB(OD).reshape(I.shape)
-    return 255 * out / out.max()
+    return spams.lasso(OD.T, D=stain_matrix.T, mode=2, lambda1=.1, pos=True).toarray().T
 
-###################################################
+
+def normalize_Vahadane(patch, targetImg):
+    """
+
+    :param patch:
+    :param targetImg:
+    :return:
+    """
+    stain_matrix_source = get_stain_matrix(patch)
+    stain_matrix_target = get_stain_matrix(targetImg)
+    source_concentrations = get_coeffs(patch, stain_matrix_source)
+    return 255 * np.exp(-1 * np.dot(source_concentrations, stain_matrix_target).reshape(patch.shape))
