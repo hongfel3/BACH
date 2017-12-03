@@ -34,7 +34,7 @@ def merge_back(I1, I2, I3):
     I1 *= 2.55
     I2 += 128.0
     I3 += 128.0
-    I = cv.merge((I1, I2, I3)).astype(np.uint8)
+    I = np.clip(cv.merge((I1, I2, I3)),0,255).astype(np.uint8)
     return cv.cvtColor(I, cv.COLOR_LAB2RGB)
 
 
