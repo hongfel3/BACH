@@ -15,31 +15,34 @@ import spams
 from utils import stainNorm_utils as ut
 
 
-def get_stain_matrix(I):
+def get_stain_matrix(I, threshold=0.8, lamda=1):
     """
     Get 2x3 stain matrix. First row H and second row E
     :param I:
+    :param threshold:
+    :param lamda:
     :return:
     """
-    mask = ut.notwhite_mask(I, thresh=0.8).reshape((-1,))
+    mask = ut.notwhite_mask(I, thresh=threshold).reshape((-1,))
     OD = ut.RGB_to_OD(I).reshape((-1, 3))
     OD = OD[mask]
-    dictionary = spams.trainDL(OD.T, K=2, lambda1=1, mode=2, modeD=0, posAlpha=True, posD=True).T
+    dictionary = spams.trainDL(OD.T, K=2, lambda1=lamda, mode=2, modeD=0, posAlpha=True, posD=True).T
     if dictionary[0, 0] < dictionary[1, 0]:
         dictionary = dictionary[[1, 0], :]
     dictionary = ut.normalize_rows(dictionary)
     return dictionary
 
 
-def get_concentrations(I, stain_matrix):
+def get_concentrations(I, stain_matrix, lamda=0.01):
     """
     Get concentrations, a npix x 2 matrix
     :param I:
     :param stain_matrix:
+    :param lamda:
     :return:
     """
     OD = ut.RGB_to_OD(I).reshape((-1, 3))
-    return spams.lasso(OD.T, D=stain_matrix.T, mode=2, lambda1=0.01, pos=True).toarray().T
+    return spams.lasso(OD.T, D=stain_matrix.T, mode=2, lambda1=lamda, pos=True).toarray().T
 
 
 ###
@@ -54,6 +57,9 @@ class normalizer(object):
 
     def fit(self, target):
         self.stain_matrix_target = get_stain_matrix(target)
+
+    def target_stains(self):
+        return ut.OD_to_RGB(self.stain_matrix_target)
 
     def transform(self, I):
         stain_matrix_source = get_stain_matrix(I)

@@ -1,4 +1,8 @@
 """
+Stain normalization based on the method of:
+
+M. Macenko et al., ‘A method for normalizing histology slides for quantitative analysis’, in 2009 IEEE International Symposium on Biomedical Imaging: From Nano to Macro, 2009, pp. 1107–1110.
+
 Uses the spams package:
 
 http://spams-devel.gforge.inria.fr/index.html
@@ -8,45 +12,6 @@ Use with python via e.g https://anaconda.org/conda-forge/python-spams
 
 import numpy as np
 import spams
-
-
-def remove_zeros(I):
-    """
-    Remove zeros
-    :param I:
-    :return:
-    """
-    mask = (I == 0)
-    I[mask] = 1
-    return I
-
-
-def normalize_rows(A):
-    """
-    Normalize rows of an array
-    :param A:
-    :return:
-    """
-    return A / np.linalg.norm(A, axis=1)[:, None]
-
-
-def RGB_to_OD(I):
-    """
-    Convert from RGB to optical density
-    :param I:
-    :return:
-    """
-    I = remove_zeros(I)
-    return -1 * np.log(I / 255)
-
-
-def normalize_columns(A):
-    """
-    Normalize columns of an array
-    :param A:
-    :return:
-    """
-    return A / np.linalg.norm(A, axis=0)
 
 
 def get_stain_matrix(I, beta=0.15, alpha=1):
@@ -91,17 +56,7 @@ def get_concentrations(I, stain_matrix):
 
 def normalize_Macenko(patch, targetImg, beta=0.15, alpha=1):
     """
-    Stain normalization based on the method of:
 
-    M. Macenko et al., ‘A method for normalizing histology slides for quantitative analysis’, in 2009 IEEE International Symposium on Biomedical Imaging: From Nano to Macro, 2009, pp. 1107–1110.
-
-    Adapted from:
-
-    T. Araújo et al., ‘Classification of breast cancer histology images using Convolutional Neural Networks’, PLOS ONE, vol. 12, no. 6, p. e0177544, Jun. 2017.
-
-    and the MATLAB toolbox available at:
-
-    https://warwick.ac.uk/fac/sci/dcs/research/tia/software/sntoolbox/
     :param patch: a patch RGB in format uint8
     :param targetImg: a target RGB image in format uint8
     :param Io:
