@@ -20,6 +20,7 @@ def remove_zeros(I):
     I[mask] = 1
     return I
 
+
 def normalize_rows(A):
     """
     Normalize rows of an array
@@ -48,6 +49,33 @@ def normalize_columns(A):
     return A / np.linalg.norm(A, axis=0)
 
 
+def get_stain_matrix(I, beta=0.15, alpha=1):
+    """
+    Get stain matrix (2x3)
+    :param I:
+    :param beta:
+    :param alpha:
+    :return:
+    """
+    OD = RGB_to_OD(I).reshape((-1, 3))
+    ODhat = (OD[(OD > beta).any(axis=1), :])
+    _, V = np.linalg.eigh(np.cov(ODhat, rowvar=False))
+    V = V[:, [2, 1]]
+    if V[0, 0] < 0: V[:, 0] *= -1
+    if V[0, 1] < 0: V[:, 1] *= -1
+    That = np.dot(ODhat, V)
+    phi = np.arctan2(That[:, 1], That[:, 0])
+    minPhi = np.percentile(phi, alpha)
+    maxPhi = np.percentile(phi, 100 - alpha)
+    v1 = np.dot(V, np.array([np.cos(minPhi), np.sin(minPhi)]))
+    v2 = np.dot(V, np.array([np.cos(maxPhi), np.sin(maxPhi)]))
+    if v1[0] > v2[0]:
+        HE = np.array([v1, v2])
+    else:
+        HE = np.array([v2, v1])
+    return normalize_rows(HE)
+
+
 def get_concentrations(I, stain_matrix):
     """
     Get concentrations, a npix x 2 matrix
@@ -61,7 +89,7 @@ def get_concentrations(I, stain_matrix):
 
 ####################################################
 
-def normalize_Macenko(patch, targetImg, Io=255, beta=0.15, alpha=1):
+def normalize_Macenko(patch, targetImg, beta=0.15, alpha=1):
     """
     Stain normalization based on the method of:
 
@@ -82,7 +110,8 @@ def normalize_Macenko(patch, targetImg, Io=255, beta=0.15, alpha=1):
     :param intensity_norm:
     :return:
     """
-    OD = RGB_to_OD(patch).reshape((-1,3))
+    h, w, c = patch.shape
+    OD = RGB_to_OD(patch).reshape((-1, 3))
     ODhat = (OD[(OD > beta).any(axis=1), :])
     _, V = np.linalg.eigh(np.cov(ODhat, rowvar=False))
     V = V[:, [2, 1]]
@@ -101,7 +130,7 @@ def normalize_Macenko(patch, targetImg, Io=255, beta=0.15, alpha=1):
     HE = normalize_rows(HE)
 
     # Get target stain matrix
-    OD_target = RGB_to_OD(targetImg).reshape((-1,3))
+    OD_target = RGB_to_OD(targetImg).reshape((-1, 3))
     ODhat_target = (OD_target[(OD_target > beta).any(axis=1), :])
     _, V = np.linalg.eigh(np.cov(ODhat_target, rowvar=False))
     V = V[:, [2, 1]]
@@ -120,7 +149,7 @@ def normalize_Macenko(patch, targetImg, Io=255, beta=0.15, alpha=1):
     HE_target = normalize_rows(HE_target)
 
     # Get source concentrations
-    C=get_concentrations(patch,HE)
+    C = get_concentrations(patch, HE)
 
     # ### Modify concentrations ### # ignore this
     # if intensity_norm == True:
@@ -133,7 +162,7 @@ def normalize_Macenko(patch, targetImg, Io=255, beta=0.15, alpha=1):
     #     C = C * maxC_target / maxC
 
     # Final tidy up
-    Inorm = Io * np.exp(- np.dot(C,HE_target))
+    Inorm = 255 * np.exp(- np.dot(C, HE_target))
     Inorm = np.reshape(Inorm, (h, w, c))
     Inorm = np.clip(Inorm, 0, 255)
     Inorm = np.array(Inorm, dtype=np.uint8)
