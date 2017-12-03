@@ -51,6 +51,7 @@ class normalizer(object):
 
     def __init__(self):
         self.stain_matrix_target = None
+        self.target_concentrations = None
 
     def fit(self, target):
         self.stain_matrix_target = get_stain_matrix(target)

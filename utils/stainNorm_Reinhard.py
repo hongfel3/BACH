@@ -1,15 +1,14 @@
+"""
+Normalize a patch stain to the target image using the method of:
+
+E. Reinhard, M. Adhikhmin, B. Gooch, and P. Shirley, ‘Color transfer between images’, IEEE Computer Graphics and Applications, vol. 21, no. 5, pp. 34–41, Sep. 2001.
+"""
+
 import cv2 as cv
 import numpy as np
 
-
-#########################################################################
-
 def normalize_Reinhard(patch, targetImg):
     """
-    Normalize a patch stain to the target image using the method of:
-
-    E. Reinhard, M. Adhikhmin, B. Gooch, and P. Shirley, ‘Color transfer between images’, IEEE Computer Graphics and Applications, vol. 21, no. 5, pp. 34–41, Sep. 2001.
-
     :param patch: a patch RGB in format uint8
     :param targetImg: a target RGB image in format uint8
     :return:
@@ -28,13 +27,6 @@ def normalize_Reinhard(patch, targetImg):
     mS2, sdS2 = cv.meanStdDev(s2)
     mS3, sdS3 = cv.meanStdDev(s3)
 
-    # Don't think this is necessary...
-    # if sdS1 == 0:
-    #     sdS1 = 1;
-    # if sdS2 == 0:
-    #     sdS2 = 1;
-    # if sdS3 == 0:
-    #     sdS3 = 1;
 
     # Convert from RGB to Lab color space
     targetImg = cv.cvtColor(targetImg, cv.COLOR_RGB2LAB)
@@ -65,3 +57,33 @@ def normalize_Reinhard(patch, targetImg):
     norm = cv.cvtColor(normLab, cv.COLOR_LAB2RGB)
 
     return norm
+
+###
+
+class normalizer(object):
+    """
+    A stain normalization object
+    """
+
+    def __init__(self):
+        self.
+
+    def fit(self, target):
+        self.stain_matrix_target = get_stain_matrix(target)
+
+    def target_stains(self):
+        return ut.OD_to_RGB(self.stain_matrix_target)
+
+    def transform(self, I):
+        stain_matrix_source = get_stain_matrix(I)
+        source_concentrations = ut.get_concentrations(I, stain_matrix_source)
+        return (255 * np.exp(-1 * np.dot(source_concentrations, self.stain_matrix_target).reshape(I.shape))).astype(
+            np.uint8)
+
+    def hematoxylin(self, I):
+        h, w, c = I.shape
+        stain_matrix_source = get_stain_matrix(I)
+        source_concentrations = ut.get_concentrations(I, stain_matrix_source)
+        H = source_concentrations[:, 0].reshape(h, w)
+        H = np.exp(-1 * H)
+        return H
