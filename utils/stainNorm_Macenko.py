@@ -110,60 +110,23 @@ def normalize_Macenko(patch, targetImg, beta=0.15, alpha=1):
     :param intensity_norm:
     :return:
     """
-    h, w, c = patch.shape
-    OD = RGB_to_OD(patch).reshape((-1, 3))
-    ODhat = (OD[(OD > beta).any(axis=1), :])
-    _, V = np.linalg.eigh(np.cov(ODhat, rowvar=False))
-    V = V[:, [2, 1]]
-    if V[0, 0] < 0: V[:, 0] *= -1
-    if V[0, 1] < 0: V[:, 1] *= -1
-    That = np.dot(ODhat, V)
-    phi = np.arctan2(That[:, 1], That[:, 0])
-    minPhi = np.percentile(phi, alpha)
-    maxPhi = np.percentile(phi, 100 - alpha)
-    v1 = np.dot(V, np.array([np.cos(minPhi), np.sin(minPhi)]))
-    v2 = np.dot(V, np.array([np.cos(maxPhi), np.sin(maxPhi)]))
-    if v1[0] > v2[0]:
-        HE = np.array([v1, v2])
-    else:
-        HE = np.array([v2, v1])
-    HE = normalize_rows(HE)
 
-    # Get target stain matrix
-    OD_target = RGB_to_OD(targetImg).reshape((-1, 3))
-    ODhat_target = (OD_target[(OD_target > beta).any(axis=1), :])
-    _, V = np.linalg.eigh(np.cov(ODhat_target, rowvar=False))
-    V = V[:, [2, 1]]
-    if V[0, 0] < 0: V[:, 0] *= -1
-    if V[0, 1] < 0: V[:, 1] *= -1
-    That = np.dot(ODhat_target, V)
-    phi = np.arctan2(That[:, 1], That[:, 0])
-    minPhi = np.percentile(phi, alpha)
-    maxPhi = np.percentile(phi, 100 - alpha)
-    v1 = np.dot(V, np.array([np.cos(minPhi), np.sin(minPhi)]))
-    v2 = np.dot(V, np.array([np.cos(maxPhi), np.sin(maxPhi)]))
-    if v1[0] > v2[0]:
-        HE_target = np.array([v1, v2])
-    else:
-        HE_target = np.array([v2, v1])
-    HE_target = normalize_rows(HE_target)
+    HE = get_stain_matrix(patch, beta=beta, alpha=alpha)
+
+    HE_target = get_stain_matrix(targetImg, beta=beta, alpha=alpha)
 
     # Get source concentrations
     C = get_concentrations(patch, HE)
 
-    # ### Modify concentrations ### # ignore this
-    # if intensity_norm == True:
-    #     maxC = np.percentile(C, 99, axis=1).reshape((3, 1))
-    #     maxC[2] = 1
-    #     Y_target = OD_target.T
-    #     C_target = np.linalg.lstsq(HE_target, Y_target)[0]
-    #     maxC_target = np.percentile(C_target, 99, axis=1).reshape((3, 1))
-    #     maxC_target[2] = 1
-    #     C = C * maxC_target / maxC
+    ### Modify concentrations ###
+    maxC = np.percentile(C, 99, axis=0).reshape((1, 2))
+    C_target = get_concentrations(targetImg, HE_target)
+    maxC_target = np.percentile(C_target, 99, axis=0).reshape((1, 2))
+    C = C * maxC_target / maxC
 
     # Final tidy up
     Inorm = 255 * np.exp(- np.dot(C, HE_target))
-    Inorm = np.reshape(Inorm, (h, w, c))
+    Inorm = np.reshape(Inorm, patch.shape)
     Inorm = np.clip(Inorm, 0, 255)
     Inorm = np.array(Inorm, dtype=np.uint8)
 
