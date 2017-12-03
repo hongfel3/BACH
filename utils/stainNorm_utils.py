@@ -4,8 +4,8 @@ import cv2 as cv
 
 def remove_zeros(I):
     """
-    Remove zeros
-    :param I:
+    Remove zeros, replace with 1's.
+    :param I: uint8 array
     :return:
     """
     mask = (I == 0)
