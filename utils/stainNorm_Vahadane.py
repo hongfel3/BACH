@@ -125,7 +125,7 @@ def get_concentrations(I, stain_matrix):
     :return:
     """
     OD = RGB_to_OD(I).reshape((-1, 3))
-    return spams.lasso(OD.T, D=stain_matrix.T, mode=2, lambda1=0.1, pos=True).toarray().T
+    return spams.lasso(OD.T, D=stain_matrix.T, mode=2, lambda1=0.01, pos=True).toarray().T
 
 
 def normalize_Vahadane(I, targetImg):
@@ -142,6 +142,11 @@ def normalize_Vahadane(I, targetImg):
 
 
 def HandE(I):
+    """
+    Get H and E (deconvolve)
+    :param I:
+    :return:
+    """
     h, w, c = I.shape
     stain_matrix_source = get_stain_matrix(I)
     source_concentrations = get_concentrations(I, stain_matrix_source)
