@@ -9,11 +9,11 @@ def show_colors(C):
     :return:
     """
     n = C.shape[0]
-    for i in range(n-1,0,-1):
+    for i in range(n):
         if C[i].max()>1.0:
-            plt.plot([0, 1], [i, i], c=C[i]/255, linewidth=20)
+            plt.plot([0, 1], [n-1-i, n-1-i], c=C[i]/255, linewidth=20)
         else:
-            plt.plot([0, 1], [i, i], c=C[i], linewidth=20)
+            plt.plot([0, 1], [n-1-i, n-1-i], c=C[i], linewidth=20)
         plt.axis('off')
         plt.axis([0, 1, -1, n])
 
