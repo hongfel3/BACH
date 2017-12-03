@@ -1,5 +1,14 @@
+"""
+Uses the spams package:
+
+http://spams-devel.gforge.inria.fr/index.html
+
+Use with python via e.g https://anaconda.org/conda-forge/python-spams
+"""
+
 import numpy as np
 import cv2 as cv
+import spams
 
 
 def remove_zeros(I):
@@ -40,6 +49,7 @@ def normalize_rows(A):
     """
     return A / np.linalg.norm(A, axis=1)[:, None]
 
+
 def notwhite_mask(I, thresh=0.8):
     """
     Get a binary mask where true denotes 'not white'
@@ -64,3 +74,14 @@ def sign(x):
         return -1
     elif x == 0:
         return 0
+
+
+def get_concentrations(I, stain_matrix, lamda=0.01):
+    """
+    Get concentrations, a npix x 2 matrix
+    :param I:
+    :param stain_matrix: a 2x3 stain matrix
+    :return:
+    """
+    OD = RGB_to_OD(I).reshape((-1, 3))
+    return spams.lasso(OD.T, D=stain_matrix.T, mode=2, lambda1=lamda, pos=True).toarray().T

@@ -42,17 +42,6 @@ def get_stain_matrix(I, beta=0.15, alpha=1):
     return ut.normalize_rows(HE)
 
 
-def get_concentrations(I, stain_matrix, lamda=0.01):
-    """
-    Get concentrations, a npix x 2 matrix
-    :param I:
-    :param stain_matrix:
-    :return:
-    """
-    OD = ut.RGB_to_OD(I).reshape((-1, 3))
-    return spams.lasso(OD.T, D=stain_matrix.T, mode=2, lambda1=lamda, pos=True).toarray().T
-
-
 ###
 
 class normalizer(object):
@@ -65,14 +54,14 @@ class normalizer(object):
 
     def fit(self, target):
         self.stain_matrix_target = get_stain_matrix(target)
-        self.target_concentrations = get_concentrations(target, self.stain_matrix_target)
+        self.target_concentrations = ut.get_concentrations(target, self.stain_matrix_target)
 
     def target_stains(self):
         return ut.OD_to_RGB(self.stain_matrix_target)
 
     def transform(self, I):
         stain_matrix_source = get_stain_matrix(I)
-        source_concentrations = get_concentrations(I, stain_matrix_source)
+        source_concentrations = ut.get_concentrations(I, stain_matrix_source)
         maxC_source = np.percentile(source_concentrations, 99, axis=0).reshape((1, 2))
         maxC_target = np.percentile(self.target_concentrations, 99, axis=0).reshape((1, 2))
         source_concentrations *= (maxC_target / maxC_source)
@@ -82,7 +71,7 @@ class normalizer(object):
     def hematoxylin(self, I):
         h, w, c = I.shape
         stain_matrix_source = get_stain_matrix(I)
-        source_concentrations = get_concentrations(I, stain_matrix_source)
+        source_concentrations = ut.get_concentrations(I, stain_matrix_source)
         H = source_concentrations[:, 0].reshape(h, w)
         H = np.exp(-1 * H)
         return H
