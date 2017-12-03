@@ -1,6 +1,6 @@
 import os
 
-from utils import stainNorm_Reinhard as stain
+from utils import stainNorm_Macenko as stain
 
 from utils import misc_utils as mu
 
