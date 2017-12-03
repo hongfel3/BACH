@@ -39,36 +39,7 @@ def get_concentrations(I, stain_matrix):
     :return:
     """
     OD = ut.RGB_to_OD(I).reshape((-1, 3))
-    return spams.lasso(OD.T, D=stain_matrix.T, mode=2, lambda1=0.1, pos=True).toarray().T
-
-
-def normalize_Vahadane(I, targetImg):
-    """
-    Normalize a patch  to stain of target
-    :param I:
-    :param targetImg:
-    :return:
-    """
-    stain_matrix_source = get_stain_matrix(I)
-    stain_matrix_target = get_stain_matrix(targetImg)
-    source_concentrations = get_concentrations(I, stain_matrix_source)
-    return (255 * np.exp(-1 * np.dot(source_concentrations, stain_matrix_target).reshape(I.shape))).astype(np.uint8)
-
-
-def HandE(I):
-    """
-    Get H and E (deconvolve)
-    :param I:
-    :return:
-    """
-    h, w, c = I.shape
-    stain_matrix_source = get_stain_matrix(I)
-    source_concentrations = get_concentrations(I, stain_matrix_source)
-    H = source_concentrations[:, 0].reshape(h, w)
-    H = np.exp(-1 * H)
-    E = source_concentrations[:, 1].reshape(h, w)
-    E = np.exp(-1 * E)
-    return H, E
+    return spams.lasso(OD.T, D=stain_matrix.T, mode=2, lambda1=0.01, pos=True).toarray().T
 
 
 ###
@@ -77,6 +48,7 @@ class normalizer(object):
     """
     A stain normalization object
     """
+
     def __init__(self):
         self.stain_matrix_target = None
 
@@ -88,3 +60,11 @@ class normalizer(object):
         source_concentrations = get_concentrations(I, stain_matrix_source)
         return (255 * np.exp(-1 * np.dot(source_concentrations, self.stain_matrix_target).reshape(I.shape))).astype(
             np.uint8)
+
+    def hematoxylin(self, I):
+        h, w, c = I.shape
+        stain_matrix_source = get_stain_matrix(I)
+        source_concentrations = get_concentrations(I, stain_matrix_source)
+        H = source_concentrations[:, 0].reshape(h, w)
+        H = np.exp(-1 * H)
+        return H
