@@ -4,3 +4,7 @@ General process:
 - Stain normalize (normalize_data.py)
 - Get patches (get_patches.py)
 - Run CNN (CNN.py)
+
+###
+
+Also some stain normalization code in utils
