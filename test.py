@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 import numpy as np
-from utils import basic_networks
+from utils import basic_network_tf
 from utils import misc_utils as mu
 import os
 import glob
@@ -22,7 +22,7 @@ x = tf.placeholder(tf.float32, [None, 512, 512, 3])
 y = tf.placeholder(tf.uint8, [None, 4])
 training = tf.placeholder(tf.bool)
 
-out = basic_networks.basic_CNN(x, training=training)
+out = basic_network_tf.basic_CNN(x, training=training)
 
 sess = tf.Session()
 

@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.contrib import keras
 
-from utils import basic_networks
+from utils import basic_network_tf
 from utils import misc_utils as mu
 import os
 
@@ -47,7 +47,7 @@ x = tf.placeholder(tf.float32, [None, 512, 512, 3])
 y = tf.placeholder(tf.uint8, [None, 4])
 training = tf.placeholder(tf.bool)
 
-out = basic_networks.basic_CNN(x, training=training)
+out = basic_network_tf.basic_CNN(x, training=training)
 
 accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(y, 1), tf.argmax(out, 1)), 'float32'))
 loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=out))
