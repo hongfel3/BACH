@@ -1,8 +1,10 @@
 import os
 
-from utils import stainNorm_Macenko as stain
-
 from utils import misc_utils as mu
+
+import sys
+sys.path.append('/home/peter/byfield554@gmail.com/projects/stains')
+import stainNorm_Vahadane as stain
 
 data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Photos'
 save_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_normalized'
