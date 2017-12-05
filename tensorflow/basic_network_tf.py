@@ -5,8 +5,8 @@ def conv_relu3x3(x, scope, num_filters, padding='VALID', train=True):
     with tf.variable_scope(scope):
         h1 = tf.layers.conv2d(x, filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=padding, name='conv',
                               kernel_initializer=tf.contrib.layers.xavier_initializer())
-        h2 = tf.layers.batch_normalization(h1, scale=True, center=True, name='bn', training=train, momentum=0.9)
-        return tf.nn.relu(h2)
+        # h2 = tf.layers.batch_normalization(h1, scale=True, center=True, name='bn', training=train, momentum=0.9)
+        return tf.nn.relu(h1)
 
 
 def max_pool3x3(x):
@@ -21,9 +21,9 @@ def dense_relu(x, scope, num_out, train=True):
     with tf.variable_scope(scope):
         h1 = tf.layers.dense(x, units=num_out, activation=None, name='fc',
                              kernel_initializer=tf.contrib.layers.xavier_initializer())
-        h2 = tf.layers.batch_normalization(h1, scale=True, center=True, name='bn', training=train, momentum=0.9)
-        h3 = tf.nn.relu(h2)
-        return tf.layers.dropout(h3, rate=0.5, training=train)
+        # h2 = tf.layers.batch_normalization(h1, scale=True, center=True, name='bn', training=train, momentum=0.9)
+        h3 = tf.nn.relu(h1)
+        return h3 #tf.layers.dropout(h3, rate=0.5, training=train)
 
 
 def dense(x, scope, num_out):
