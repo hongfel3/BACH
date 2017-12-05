@@ -1,10 +1,11 @@
-import tensorflow as tf
+import glob
+import os
 
 import numpy as np
-from utils import basic_network_tf
+import tensorflow as tf
+from tensorflow import basic_network_tf
+
 from utils import misc_utils as mu
-import os
-import glob
 
 
 def to_probability(x):

@@ -1,7 +1,7 @@
 import tensorflow as tf
+from tensorflow import basic_network_tf
 from tensorflow.contrib import keras
 
-from utils import basic_network_tf
 from utils import misc_utils as mu
 
 ######
