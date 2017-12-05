@@ -2,12 +2,15 @@ import os
 import numpy as np
 from utils import misc_utils as mu
 
-data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_normalized'
+# root_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/'
+root_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/'
 
-save_dir_train = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set'
-save_dir_val = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set'
-save_dir_test = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Test_set'
-save_dir_mini = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set'
+data_dir = root_dir + 'BACH_normalized'
+
+save_dir_train = root_dir + 'Train_set'
+save_dir_val = root_dir + 'Val_set'
+save_dir_test = root_dir + 'Test_set'
+save_dir_mini = root_dir + 'Mini_set'
 
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}

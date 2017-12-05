@@ -6,14 +6,17 @@ import sys
 sys.path.append('/home/peter/byfield554@gmail.com/projects/stains')
 import stainNorm_Vahadane as stain
 
-data_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Photos'
-save_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/BACH_normalized'
+# data_root = '/media/peter/HDD 1/'
+data_root = '/home/peter/datasets/'
+
+data_dir = data_root + 'ICIAR2018_BACH_Challenge/Photos'
+save_dir = data_root + 'ICIAR2018_BACH_Challenge/BACH_normalized'
 
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
 
 target = mu.read_image(os.path.join(data_dir, 'Benign', 'b027.tif'))
-n=stain.normalizer()
+n = stain.normalizer()
 n.fit(target)
 
 for c in classes:
