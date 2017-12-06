@@ -25,19 +25,24 @@ if mini == True:
     # training data
     train_data = ImageDataGenerator().flow_from_directory(os.path.join(root_dir, 'Mini_set'),
                                                           target_size=(512, 512), batch_size=batch_size)
+    print(train_data.class_indices)
 
     # validation data
     val_data = ImageDataGenerator().flow_from_directory(os.path.join(root_dir, 'Mini_set'),
                                                         target_size=(512, 512), batch_size=batch_size)
+    print(val_data.class_indices)
+
 elif mini == False:
     # training data
     train_data = ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot).flow_from_directory(
         os.path.join(root_dir, 'Train_set'),
         target_size=(512, 512), batch_size=batch_size)
+    print(train_data.class_indices)
 
     # validation data
     val_data = ImageDataGenerator().flow_from_directory(os.path.join(root_dir, 'Val_set'),
                                                         target_size=(512, 512), batch_size=batch_size)
+    print(val_data.class_indices)
 
 
 ###
