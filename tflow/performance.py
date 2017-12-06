@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 import tensorflow as tf
-from tensorflow import basic_network_tf
+from tflow import basic_network_tf
 
 from utils import misc_utils as mu
 
@@ -14,7 +14,7 @@ def to_probability(x):
     return temp1 / temp2
 
 
-data_dir = '/home/peter/BACH_remake/jevjev/Test_set'
+data_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/Test_set'
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
 labels = {'Benign': 0, 'InSitu': 1, 'Invasive': 2, 'Normal': 3}
@@ -26,9 +26,10 @@ training = tf.placeholder(tf.bool)
 out = basic_network_tf.basic_CNN(x, training=training)
 
 sess = tf.Session()
+sess.run(tf.global_variables_initializer())
 
 saver = tf.train.Saver()
-saver.restore(sess, './jevjev/saves/best_model.ckpt')
+saver.restore(sess, './saves/best_model.ckpt')
 
 n_patch = 0
 n_ims = 0
