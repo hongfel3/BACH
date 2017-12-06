@@ -15,12 +15,8 @@ There are four classes (100 images per class):
 
 The general idea is to build a patch based classifier (CNN) and then aggregate the results to give an overall image class. The patch size used is 512x512.
 
+The order in which to do things is:
 
-
-
-
-- Stain normalize (normalize_data.py)
-- Get patches (get_patches.py)
-- Run CNN (CNN.py)
--
-
+1. Normalize images(normalize_data.py, requires [stain normalization code](https://github.com/Peter554/Stain-Normalization-))
+2. Get training and validation patches and test images (get_patches.py)
+3. Train model (CNN_keras.py)
