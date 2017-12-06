@@ -104,6 +104,6 @@ call2 = ModelCheckpoint('best_model.h5', monitor='val_acc', verbose=True, save_b
 
 ###
 
-total_epochs = 100
+total_epochs = 50
 
 model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data, callbacks=[call1, call2])
