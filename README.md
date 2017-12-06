@@ -31,4 +31,6 @@ We can then evaluate performance on the test images. We aim to match the perform
 
 4. Run notebook (performance.ipynb)
 
+We use 60 images for training and keep 20 for validation and 20 for testing. The CNN is implemented in [Keras](https://keras.io/) using [Tensorflow](https://www.tensorflow.org/) as a backend.
+
 # Results
