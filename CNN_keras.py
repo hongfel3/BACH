@@ -3,12 +3,9 @@ from keras import optimizers
 from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import TensorBoard, ModelCheckpoint
-from keras import backend
 
 import os
 from utils import misc_utils as mu
-
-backend.clear_session()
 
 ###
 
