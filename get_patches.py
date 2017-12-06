@@ -2,11 +2,10 @@ import os
 import numpy as np
 from utils import misc_utils as mu
 
-# root_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/'
-root_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge/'
+### change me ###
+root_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/'
 
 data_dir = root_dir + 'BACH_normalized'
-
 save_dir_train = root_dir + 'Train_set'
 save_dir_val = root_dir + 'Val_set'
 save_dir_test = root_dir + 'Test_set'
@@ -63,6 +62,8 @@ for c in classes:
 
         sub = os.path.join(save_dir_test, c, prefixes[c] + mu.i2str(i + 1))
         mu.save_aspng(image, sub + '.png', compression=1)
+
+### mini set just for debugging
 
 for c in classes:
     filename = prefixes[c] + mu.i2str(1) + '_normalized.png'
