@@ -13,6 +13,8 @@ There are four classes (100 images per class):
 - Invasive Carcinoma
 - Normal
 
+<a href="https://imgur.com/UbxSaBC"><img src="https://i.imgur.com/UbxSaBCl.png" title="source: imgur.com" /></a>
+
 The general idea is to build a patch based classifier (CNN) and then aggregate the results to give an overall image class. The patch size used is 512x512.
 
 The order in which to do things is:
