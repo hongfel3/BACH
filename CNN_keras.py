@@ -17,7 +17,7 @@ batch_size = 64
 # root_dir = '/home/peter/datasets/ICIAR2018_BACH_Challenge'
 root_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge'
 
-mini = True
+mini = False
 
 if mini == True:
     # training data
