@@ -23,24 +23,21 @@ mini = False
 
 if mini == True:
     # training data
-    train_gen = ImageDataGenerator()
-    train_data = train_gen.flow_from_directory(os.path.join(root_dir, 'Mini_set'),
-                                               target_size=(512, 512), batch_size=batch_size)
+    train_data = ImageDataGenerator().flow_from_directory(os.path.join(root_dir, 'Mini_set'),
+                                                          target_size=(512, 512), batch_size=batch_size)
 
     # validation data
-    val_gen = ImageDataGenerator()
-    val_data = val_gen.flow_from_directory(os.path.join(root_dir, 'Mini_set'),
-                                           target_size=(512, 512), batch_size=batch_size)
+    val_data = ImageDataGenerator().flow_from_directory(os.path.join(root_dir, 'Mini_set'),
+                                                        target_size=(512, 512), batch_size=batch_size)
 elif mini == False:
     # training data
-    train_gen = ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot)
-    train_data = train_gen.flow_from_directory(os.path.join(root_dir, 'Train_set'),
-                                               target_size=(512, 512), batch_size=batch_size)
+    train_data = ImageDataGenerator(horizontal_flip=True, preprocessing_function=mu.RandRot).flow_from_directory(
+        os.path.join(root_dir, 'Train_set'),
+        target_size=(512, 512), batch_size=batch_size)
 
     # validation data
-    val_gen = ImageDataGenerator()
-    val_data = val_gen.flow_from_directory(os.path.join(root_dir, 'Val_set'),
-                                           target_size=(512, 512), batch_size=batch_size)
+    val_data = ImageDataGenerator().flow_from_directory(os.path.join(root_dir, 'Val_set'),
+                                                        target_size=(512, 512), batch_size=batch_size)
 
 
 ###
