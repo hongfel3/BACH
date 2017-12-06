@@ -98,11 +98,10 @@ model.compile(optimizer=optim,
 mu.build_empty_dir('logs')
 call1 = TensorBoard(log_dir='logs')
 
-call2=ModelCheckpoint('best_model.h5',monitor='val_acc',verbose=True,save_best_only=True)
+call2 = ModelCheckpoint('best_model.h5', monitor='val_acc', verbose=True, save_best_only=True)
 
 ###
 
-
 total_epochs = 100
 
-model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data, callbacks=[call])
+model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data, callbacks=[call1, call2])
