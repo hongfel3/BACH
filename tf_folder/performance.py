@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 import tensorflow as tf
-from tflow import basic_network_tf
+from tf_folder import basic_network_tf
 
 from utils import misc_utils as mu
 
