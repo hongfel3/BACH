@@ -2,7 +2,7 @@ from keras.layers import Input, Dense, Conv2D, Activation, MaxPool2D, Flatten, B
 from keras import optimizers
 from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
-from keras.callbacks import TensorBoard
+from keras.callbacks import TensorBoard, ModelCheckpoint
 
 import os
 from utils import misc_utils as mu
@@ -96,23 +96,13 @@ model.compile(optimizer=optim,
               metrics=['accuracy'])
 
 mu.build_empty_dir('logs')
-call = TensorBoard(log_dir='logs')
+call1 = TensorBoard(log_dir='logs')
+
+call2=ModelCheckpoint('best_model.h5',monitor='val_acc',verbose=True,save_best_only=True)
 
 ###
 
-best_val_acc = 0.0
 
 total_epochs = 100
-epochs_per_set = 1
-number_sets = int(total_epochs / epochs_per_set)
 
-epoch = 0
-for i in range(number_sets):
-    model.fit_generator(train_data, epochs=epochs_per_set, validation_data=val_data, callbacks=[call],
-                        initial_epoch=epoch, verbose=True)
-    epoch += epochs_per_set
-
-    val_acc = model.evaluate_generator(val_data)[1]
-    if val_acc > best_val_acc:
-        best_val_acc = val_acc
-        model.save('best_model.h5')
+model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data, callbacks=[call])
