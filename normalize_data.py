@@ -9,6 +9,8 @@ import stainNorm_Vahadane as stain
 ### change me ###
 data_root = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/'
 
+###
+
 data_dir = data_root + 'Photos'
 save_dir = data_root + 'BACH_normalized'
 

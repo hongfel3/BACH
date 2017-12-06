@@ -4,6 +4,8 @@ from utils import misc_utils as mu
 ### change me ###
 root_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/'
 
+###
+
 data_dir = root_dir + 'Photos'
 save_dir = root_dir + 'BACH_thumbnails'
 

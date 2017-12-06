@@ -5,6 +5,8 @@ from utils import misc_utils as mu
 ### change me ###
 root_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/'
 
+###
+
 data_dir = root_dir + 'BACH_normalized'
 save_dir_train = root_dir + 'Train_set'
 save_dir_val = root_dir + 'Val_set'

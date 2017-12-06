@@ -27,6 +27,8 @@ The order in which to do things is:
 2. Get training and validation patches and test images (get_patches.py)
 3. Train model (CNN_keras.py)
 
+You will need to go into the files and change the paths to data (one liner).
+
 We can then evaluate performance on the test images. We aim to match the performance from the paper (78% image wise classification). A pre-trained model is included in this repository (best_model.h5).
 
 4. Run notebook (performance.ipynb)
