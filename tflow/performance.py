@@ -14,8 +14,9 @@ def to_probability(x):
     return temp1 / temp2
 
 
-root_dir = 'home/peter/datasets/'
-data_dir = root_dir + '/ICIAR2018_BACH_Challenge/Test_set'
+# root_dir = 'home/peter/datasets/'
+root_dir = '/media/peter/HDD 1/'
+data_dir = root_dir + 'ICIAR2018_BACH_Challenge/Test_set'
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
 labels = {'Benign': 0, 'InSitu': 1, 'Invasive': 2, 'Normal': 3}
@@ -38,6 +39,7 @@ mean_patch_accuracy = 0.0
 mean_image_accuracy = 0.0
 for c in classes:
     directory = os.path.join(data_dir, c, '*')
+    print(directory)
     files = glob.glob(directory)
     for f in files:
         print(f)
