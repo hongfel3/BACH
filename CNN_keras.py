@@ -45,7 +45,7 @@ elif mini == False:
     print(val_data.class_indices)
 
 
-####
+###
 
 def conv3x3_relu(x, num_filters, pad='valid'):
     x = Conv2D(filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=pad)(x)
