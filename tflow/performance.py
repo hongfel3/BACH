@@ -14,7 +14,8 @@ def to_probability(x):
     return temp1 / temp2
 
 
-data_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/Test_set'
+root_dir = 'home/peter/datasets/'
+data_dir = root_dir + '/ICIAR2018_BACH_Challenge/Test_set'
 classes = ('Benign', 'InSitu', 'Invasive', 'Normal')
 prefixes = {'Benign': 'b', 'InSitu': 'is', 'Invasive': 'iv', 'Normal': 'n'}
 labels = {'Benign': 0, 'InSitu': 1, 'Invasive': 2, 'Normal': 3}
