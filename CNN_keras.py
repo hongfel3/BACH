@@ -3,6 +3,7 @@ from keras import optimizers
 from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import TensorBoard, ModelCheckpoint
+from keras import backend
 
 import os
 from utils import misc_utils as mu
@@ -111,3 +112,5 @@ call3 = ModelCheckpoint('best_val_loss_model.h5', monitor='val_loss', verbose=Tr
 total_epochs = 50
 
 model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data, callbacks=[call1, call2, call3])
+
+backend.clear_session()
