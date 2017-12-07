@@ -1,4 +1,4 @@
-from keras.layers import Input, Dense, Conv2D, Activation, MaxPool2D, Flatten, BatchNormalization, Dropout
+from keras.layers import Input, Dense, Conv2D, Activation, MaxPool2D, Flatten, BatchNormalization
 from keras import optimizers
 from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
@@ -67,7 +67,6 @@ def max_pool2x2(x):
 def dense_relu(x, num_out):
     x = Dense(units=num_out)(x)
     x = Activation('relu')(x)
-    # x = Dropout(rate=0.5)(x)
     return x
 
 
