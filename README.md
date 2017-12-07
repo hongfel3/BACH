@@ -1,6 +1,3 @@
-- Overview
-- Results
-
 # Overview
 
 In this repository we remake the results of [this paper](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0177544) on breast image classification.
@@ -29,10 +26,10 @@ The order in which to do things is:
 
 You will need to go into the files and change the paths to data (one liner).
 
-We can then evaluate performance on the test images. We aim to match the performance from the paper (78% image wise classification). A pre-trained model is included in this repository (best_model.h5).
+We can then evaluate performance on the test images. We aim to match the performance from the paper (78% image wise classification).
 
 4. Run notebook (performance.ipynb)
 
 Per class we use 60 images for training and keep 20 for validation and 20 for testing. The CNN is implemented in [Keras](https://keras.io/) using [Tensorflow](https://www.tensorflow.org/) as a backend.
 
-# Results
+On running I achieve a test accuracy per patch of 0.68 and per image of 0.83
