@@ -66,7 +66,7 @@ def max_pool2x2(x):
 def dense_relu(x, num_out):
     x = Dense(units=num_out)(x)
     x = Activation('relu')(x)
-    x = Dropout(rate=0.5)(x)
+    # x = Dropout(rate=0.5)(x)
     return x
 
 
@@ -103,10 +103,11 @@ model.compile(optimizer=optim,
 mu.build_empty_dir('logs')
 call1 = TensorBoard(log_dir='logs')
 
-call2 = ModelCheckpoint('best_model.h5', monitor='val_acc', verbose=True, save_best_only=True)
+call2 = ModelCheckpoint('best_val_acc_model.h5', monitor='val_acc', verbose=True, save_best_only=True)
+call3 = ModelCheckpoint('best_val_loss_model.h5', monitor='val_loss', verbose=True, save_best_only=True)
 
 ###
 
 total_epochs = 50
 
-model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data, callbacks=[call1, call2])
+model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data, callbacks=[call1, call2, call3])
