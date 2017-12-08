@@ -1,9 +1,10 @@
-from keras.layers import Input, Dense, Conv2D, Activation, MaxPool2D, Flatten, BatchNormalization
+from keras.layers import Input, Dense, Conv2D, Activation, MaxPool2D, Flatten, BatchNormalization, Dropout
 from keras import optimizers
 from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import TensorBoard, ModelCheckpoint
 from keras import backend
+from keras import regularizers
 
 import os
 from utils import misc_utils as mu
@@ -12,6 +13,9 @@ from utils import misc_utils as mu
 
 learn_rate = 1e-3
 batch_size = 64
+
+dropout_rate = 0.5
+regularization_rate = 0.01
 
 ###
 
@@ -49,7 +53,8 @@ elif mini == False:
 ###
 
 def conv3x3_relu(x, num_filters, pad='valid'):
-    x = Conv2D(filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=pad)(x)
+    x = Conv2D(filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=pad,
+               kernel_regularizer=regularizers.l2(regularization_rate), bias_regularizer=regularizers.l2(regularization_rate))(x)
     x = Activation('relu')(x)
     return x
 
@@ -65,8 +70,9 @@ def max_pool2x2(x):
 
 
 def dense_relu(x, num_out):
-    x = Dense(units=num_out)(x)
+    x = Dense(units=num_out, kernel_regularizer=regularizers.l2(regularization_rate), bias_regularizer=regularizers.l2(regularization_rate))(x)
     x = Activation('relu')(x)
+    x = Dropout(rate=dropout_rate)(x)
     return x
 
 
