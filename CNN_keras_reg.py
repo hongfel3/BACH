@@ -2,8 +2,8 @@ from keras.layers import Input, Dense, Conv2D, Activation, MaxPool2D, Flatten, B
 from keras import optimizers
 from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
-from keras.callbacks import TensorBoard, ModelCheckpoint
-from keras import backend
+from keras.callbacks import TensorBoard, ModelCheckpoint, Callback
+from keras import backend as K
 from keras import regularizers
 
 import os
@@ -12,10 +12,11 @@ from utils import misc_utils as mu
 ###
 
 learn_rate = 1e-3
-batch_size = 64
+learn_rate_decay = 0
+batch_size = 16
 
 dropout_rate = 0.5
-regularization_rate = 0.01
+regularization_rate = 0.001
 
 ###
 
@@ -51,6 +52,7 @@ elif mini == False:
 
 
 ###
+
 
 def conv3x3_relu(x, num_filters, pad='valid'):
     x = Conv2D(filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=pad,
@@ -104,7 +106,7 @@ predictions = basic_network(inputs)
 
 model = Model(inputs=inputs, outputs=predictions)
 
-optim = optimizers.Adam(lr=learn_rate)
+optim = optimizers.Adam(lr=learn_rate, decay=learn_rate_decay)
 model.compile(optimizer=optim,
               loss='categorical_crossentropy',
               metrics=['accuracy'])
@@ -119,6 +121,7 @@ call3 = ModelCheckpoint('best_val_loss_model_reg.h5', monitor='val_loss', verbos
 
 total_epochs = 50
 
-model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data, callbacks=[call1, call2, call3])
+model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data,
+                    callbacks=[call1, call2, call3])
 
-backend.clear_session()
+K.clear_session()
