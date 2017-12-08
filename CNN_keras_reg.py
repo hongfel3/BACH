@@ -109,11 +109,11 @@ model.compile(optimizer=optim,
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-mu.build_empty_dir('logs')
-call1 = TensorBoard(log_dir='logs')
+mu.build_empty_dir('logs_reg')
+call1 = TensorBoard(log_dir='logs_reg')
 
-call2 = ModelCheckpoint('best_val_acc_model.h5', monitor='val_acc', verbose=True, save_best_only=True)
-call3 = ModelCheckpoint('best_val_loss_model.h5', monitor='val_loss', verbose=True, save_best_only=True)
+call2 = ModelCheckpoint('best_val_acc_model_reg.h5', monitor='val_acc', verbose=True, save_best_only=True)
+call3 = ModelCheckpoint('best_val_loss_model_reg.h5', monitor='val_loss', verbose=True, save_best_only=True)
 
 ###
 
