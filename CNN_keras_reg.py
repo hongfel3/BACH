@@ -13,7 +13,7 @@ from utils import misc_utils as mu
 
 learn_rate = 1e-3
 learn_rate_decay = 0
-batch_size = 16
+batch_size = 64
 
 dropout_rate = 0.5
 regularization_rate = 0.001
