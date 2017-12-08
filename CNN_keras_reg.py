@@ -54,7 +54,8 @@ elif mini == False:
 
 def conv3x3_relu(x, num_filters, pad='valid'):
     x = Conv2D(filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=pad,
-               kernel_regularizer=regularizers.l2(regularization_rate), bias_regularizer=regularizers.l2(regularization_rate))(x)
+               kernel_regularizer=regularizers.l2(regularization_rate),
+               bias_regularizer=regularizers.l2(regularization_rate))(x)
     x = Activation('relu')(x)
     return x
 
@@ -70,7 +71,8 @@ def max_pool2x2(x):
 
 
 def dense_relu(x, num_out):
-    x = Dense(units=num_out, kernel_regularizer=regularizers.l2(regularization_rate), bias_regularizer=regularizers.l2(regularization_rate))(x)
+    x = Dense(units=num_out, kernel_regularizer=regularizers.l2(regularization_rate),
+              bias_regularizer=regularizers.l2(regularization_rate))(x)
     x = Activation('relu')(x)
     x = Dropout(rate=dropout_rate)(x)
     return x
@@ -91,7 +93,8 @@ def basic_network(x):
     x = Flatten()(x)
     x = dense_relu(x, 256)
     x = dense_relu(x, 128)
-    return Dense(units=4, activation='softmax')(x)
+    return Dense(units=4, activation='softmax', kernel_regularizer=regularizers.l2(regularization_rate),
+                 bias_regularizer=regularizers.l2(regularization_rate))(x)
 
 
 ###
