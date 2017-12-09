@@ -12,11 +12,11 @@ from utils import misc_utils as mu
 ###
 
 learn_rate = 1e-3
-learn_rate_decay = 0
+learn_rate_decay = 0.01
 batch_size = 64
 
 dropout_rate = 0.5
-regularization_rate = 0.001
+regularization_rate = 0.0001
 
 ###
 
@@ -119,7 +119,7 @@ call3 = ModelCheckpoint('best_val_loss_model_reg.h5', monitor='val_loss', verbos
 
 ###
 
-total_epochs = 50
+total_epochs = 60
 
 model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data,
                     callbacks=[call1, call2, call3])
