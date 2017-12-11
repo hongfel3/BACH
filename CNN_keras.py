@@ -10,7 +10,7 @@ from utils import misc_utils as mu
 
 ###
 
-learn_rate = 1e-3
+initial_learn_rate = 1e-3
 batch_size = 64
 
 ###
@@ -95,7 +95,7 @@ predictions = basic_network(inputs)
 
 model = Model(inputs=inputs, outputs=predictions)
 
-optim = optimizers.Adam(lr=learn_rate)
+optim = optimizers.Adam(lr=initial_learn_rate)
 model.compile(optimizer=optim,
               loss='categorical_crossentropy',
               metrics=['accuracy'])

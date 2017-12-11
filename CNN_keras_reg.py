@@ -11,12 +11,10 @@ from utils import misc_utils as mu
 
 ###
 
-learn_rate = 1e-3
-learn_rate_decay = 0.01
+initial_learn_rate = 1e-3
 batch_size = 64
 
-dropout_rate = 0.5
-regularization_rate = 0.0001
+dropout_rate = 0.75
 
 ###
 
@@ -55,9 +53,7 @@ elif mini == False:
 
 
 def conv3x3_relu(x, num_filters, pad='valid'):
-    x = Conv2D(filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=pad,
-               kernel_regularizer=regularizers.l2(regularization_rate),
-               bias_regularizer=regularizers.l2(regularization_rate))(x)
+    x = Conv2D(filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=pad)(x)
     x = BatchNormalization(momentum=0.9)(x)
     x = Activation('relu')(x)
     return x
@@ -74,8 +70,7 @@ def max_pool2x2(x):
 
 
 def dense_relu(x, num_out):
-    x = Dense(units=num_out, kernel_regularizer=regularizers.l2(regularization_rate),
-              bias_regularizer=regularizers.l2(regularization_rate))(x)
+    x = Dense(units=num_out)(x)
     x = BatchNormalization(momentum=0.9)(x)
     x = Activation('relu')(x)
     x = Dropout(rate=dropout_rate)(x)
@@ -97,8 +92,7 @@ def basic_network(x):
     x = Flatten()(x)
     x = dense_relu(x, 256)
     x = dense_relu(x, 128)
-    return Dense(units=4, activation='softmax', kernel_regularizer=regularizers.l2(regularization_rate),
-                 bias_regularizer=regularizers.l2(regularization_rate))(x)
+    return Dense(units=4, activation='softmax')(x)
 
 
 ###
@@ -108,7 +102,7 @@ predictions = basic_network(inputs)
 
 model = Model(inputs=inputs, outputs=predictions)
 
-optim = optimizers.Adam(lr=learn_rate, decay=learn_rate_decay)
+optim = optimizers.Adam(lr=initial_learn_rate)
 model.compile(optimizer=optim,
               loss='categorical_crossentropy',
               metrics=['accuracy'])
