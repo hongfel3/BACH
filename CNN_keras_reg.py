@@ -15,7 +15,6 @@ initial_learn_rate = 1e-3
 batch_size = 64
 
 dropout_rate = 0.75
-# l2_reg = 0.001
 
 ###
 
