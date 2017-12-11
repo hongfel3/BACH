@@ -117,7 +117,7 @@ call3 = ModelCheckpoint('best_val_loss_model_reg.h5', monitor='val_loss', verbos
 
 ###
 
-total_epochs = 100
+total_epochs = 200
 
 model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data,
                     callbacks=[call1, call2, call3])
