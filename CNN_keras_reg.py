@@ -20,7 +20,7 @@ regularization_rate = 0.0001
 
 ###
 
-### change me ###
+### change me :) ###
 root_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge'
 
 ###
