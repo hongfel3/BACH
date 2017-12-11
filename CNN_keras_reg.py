@@ -4,7 +4,6 @@ from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import TensorBoard, ModelCheckpoint
 from keras import backend as K
-from keras import regularizers
 
 import os
 from utils import misc_utils as mu
