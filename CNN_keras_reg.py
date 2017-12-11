@@ -2,7 +2,7 @@ from keras.layers import Input, Dense, Conv2D, Activation, MaxPool2D, Flatten, B
 from keras import optimizers
 from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
-from keras.callbacks import TensorBoard, ModelCheckpoint, Callback
+from keras.callbacks import TensorBoard, ModelCheckpoint
 from keras import backend as K
 from keras import regularizers
 
@@ -15,6 +15,7 @@ initial_learn_rate = 1e-3
 batch_size = 64
 
 dropout_rate = 0.75
+# l2_reg = 0.001
 
 ###
 
