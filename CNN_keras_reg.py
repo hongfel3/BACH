@@ -58,6 +58,7 @@ def conv3x3_relu(x, num_filters, pad='valid'):
     x = Conv2D(filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=pad,
                kernel_regularizer=regularizers.l2(regularization_rate),
                bias_regularizer=regularizers.l2(regularization_rate))(x)
+    x = BatchNormalization(momentum=0.9)(x)
     x = Activation('relu')(x)
     return x
 
@@ -75,6 +76,7 @@ def max_pool2x2(x):
 def dense_relu(x, num_out):
     x = Dense(units=num_out, kernel_regularizer=regularizers.l2(regularization_rate),
               bias_regularizer=regularizers.l2(regularization_rate))(x)
+    x = BatchNormalization(momentum=0.9)(x)
     x = Activation('relu')(x)
     x = Dropout(rate=dropout_rate)(x)
     return x
@@ -119,7 +121,7 @@ call3 = ModelCheckpoint('best_val_loss_model_reg.h5', monitor='val_loss', verbos
 
 ###
 
-total_epochs = 60
+total_epochs = 100
 
 model.fit_generator(train_data, epochs=total_epochs, validation_data=val_data,
                     callbacks=[call1, call2, call3])
