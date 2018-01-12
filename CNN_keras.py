@@ -94,6 +94,7 @@ inputs = Input(shape=(512, 512, 3))
 predictions = basic_network(inputs)
 
 model = Model(inputs=inputs, outputs=predictions)
+print(model.summary())
 
 optim = optimizers.Adam(lr=initial_learn_rate)
 model.compile(optimizer=optim,
