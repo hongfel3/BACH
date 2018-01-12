@@ -8,29 +8,23 @@ from more.pytorch_folder import my_transforms
 
 ###
 
-dtype = torch.FloatTensor
+cuda = torch.cuda.is_available()
+
 lr = 1e-3
-
-###
-
-mean = np.load('mean.npy')
-trans = transforms.ToTensor()
-mean = trans(mean).type(dtype)
 
 ###
 
 data_transform = transforms.Compose([
     my_transforms.RandomRot(),
     transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    my_transforms.Mean_subtract(mean)
+    transforms.ToTensor()
 ])
 
 ###
 
-data_dir_mini = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Mini_set'
+data_dir_mini = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/Mini_set'
 dataset_mini = datasets.ImageFolder(root=data_dir_mini, transform=data_transform)
-mini_loader = torch.utils.data.DataLoader(dataset_mini, batch_size=16, shuffle=True)
+mini_loader = torch.utils.data.DataLoader(dataset_mini, batch_size=64, shuffle=True)
 
 
 ###
@@ -103,10 +97,10 @@ class NW(nn.Module):
 ###
 
 network = NW()
-if dtype == torch.cuda.FloatTensor:
+if cuda:
     network.cuda()
 
-criterion = nn.CrossEntropyLoss().type(dtype)
+criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(network.parameters(), lr=lr)
 
 loss_train = []
@@ -122,15 +116,18 @@ for epoch in range(num_epochs):
     losses = 0.0
     for i, (images, labels) in enumerate(mini_loader):
         print('Training batch {}'.format(i))
-        images = Variable(images.type(dtype))
-        labels = Variable(labels.type(dtype).long())
+        if cuda:
+            images=images.cuda()
+            labels=labels.cuda()
+        images = Variable(images)
+        labels = Variable(labels.long())
         optimizer.zero_grad()
         output = network(images)
         loss = criterion(output, labels)
         loss.backward()
         optimizer.step()
 
-        losses += loss
+        losses += loss.data
         cnt += 1
     loss_train.append(losses / cnt)
 
@@ -141,8 +138,11 @@ for epoch in range(num_epochs):
     cnt = 0
     losses = 0.0
     for images, labels in mini_loader:
-        images = Variable(images.type(dtype))
-        labels = Variable(labels.type(dtype).long())
+        if cuda:
+            images=images.cuda()
+            labels=labels.cuda()
+        images = Variable(images)
+        labels = Variable(labels.long())
         output = network(images)
 
         _, predicted = torch.max(output.data, 1)
@@ -150,15 +150,15 @@ for epoch in range(num_epochs):
         correct += (predicted == labels.data).sum()
 
         loss = criterion(output, labels)
-        losses += loss
+        losses += loss.data
         cnt += 1
     accuracy = 100 * correct / total
     print(accuracy)
     acc.append(accuracy)
     loss_eval.append(losses / cnt)
 
-    print('Saving model Params')
-    torch.save(network.state_dict(), 'nw' + str(epoch) + '.pkl')
+    # print('Saving model Params')
+    # torch.save(network.state_dict(), 'nw' + str(epoch) + '.pkl')
 
 print(loss_train)
 print(loss_eval)
