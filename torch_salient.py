@@ -7,7 +7,7 @@ import numpy as np
 
 ###
 
-initial_learning_rate = 0.001
+initial_learning_rate = 1e-3
 lambda_saliency = 0.0
 
 epochs = 10
@@ -59,7 +59,7 @@ class NW(nn.Module):
 
     def __init__(self):
         super(NW, self).__init__()
-        # self.ini = nn.BatchNorm2d(3, momentum=0.9)
+        # self.bn0 = nn.BatchNorm2d(3, momentum=0.9)
         self.conv1 = conv_relu_maxpool(3, 16, 3, 1, 2)
         self.conv2 = conv_relu_maxpool(16, 32, 3, 1, 2)
         self.conv3 = conv_relu_maxpool(32, 64, 3, 1, 2)
@@ -71,8 +71,8 @@ class NW(nn.Module):
         self.salient = nn.Linear(128, 2)
 
     def get_features(self, x, verbose=False):
-        if verbose: print(x.shape)
-        # x = self.ini(x)
+        # if verbose: print(x.shape)
+        # x = self.bn0(x)
         if verbose: print(x.shape)
         x = self.conv1(x)
         if verbose: print(x.shape)
