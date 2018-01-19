@@ -22,9 +22,13 @@ data_transform = transforms.Compose([
 
 ###
 
-data_dir_mini = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/BACH_normalized_2class'
-dataset = datasets.ImageFolder(root=data_dir_mini, transform=data_transform)
-data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
+data_dir_train = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Train_set_2class'
+train_dataset = datasets.ImageFolder(root=data_dir_train, transform=data_transform)
+data_loader_train = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+data_dir_val = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Val_set_2class'
+val_dataset = datasets.ImageFolder(root=data_dir_val, transform=data_transform)
+data_loader_val = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size)
 
 
 ###
@@ -115,8 +119,7 @@ optimizer = torch.optim.Adam(network.parameters(), lr=initial_learning_rate)
 ###
 
 network.train()
-
-for i, (images, labels) in enumerate(data_loader):
+for i, (images, labels) in enumerate(data_loader_train):
     print('Batch {}'.format(i))
     if cuda:
         images = images.cuda()
