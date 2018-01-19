@@ -14,14 +14,15 @@ cuda = torch.cuda.is_available()
 ###
 
 data_transform = transforms.Compose([
-    transforms.Resize((768,1024))
+    transforms.Resize((768,1024)),
     transforms.ToTensor()
 ])
 
 ###
 
 data_dir_mini = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/BACH_normalized'
-
+dataset = datasets.ImageFolder(root=data_dir_mini, transform=data_transform)
+data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 ###
 
@@ -104,3 +105,14 @@ class NW(nn.Module):
 network = NW()
 if cuda:
     network.cuda()
+
+###
+
+network.train()
+
+for i, (images, labels) in enumerate(data_loader):
+    if cuda:
+        images.cuda()
+        labels.cuda()
+
+
