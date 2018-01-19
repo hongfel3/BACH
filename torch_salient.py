@@ -10,8 +10,8 @@ import numpy as np
 initial_learning_rate = 0.001
 lambda_saliency = 0.0
 
-epochs = 1
-batch_size = 4
+epochs = 10
+batch_size = 16
 
 cuda = torch.cuda.is_available()
 
@@ -59,6 +59,7 @@ class NW(nn.Module):
 
     def __init__(self):
         super(NW, self).__init__()
+        self.ini = nn.BatchNorm2d(3, momentum=0.9)
         self.conv1 = conv_relu_maxpool(3, 16, 3, 1, 2)
         self.conv2 = conv_relu_maxpool(16, 32, 3, 1, 2)
         self.conv3 = conv_relu_maxpool(32, 64, 3, 1, 2)
@@ -70,6 +71,8 @@ class NW(nn.Module):
         self.salient = nn.Linear(128, 2)
 
     def get_features(self, x, verbose=False):
+        if verbose: print(x.shape)
+        x = self.ini(x)
         if verbose: print(x.shape)
         x = self.conv1(x)
         if verbose: print(x.shape)
@@ -121,13 +124,13 @@ optimizer = torch.optim.Adam(network.parameters(), lr=initial_learning_rate)
 ###
 
 for e in range(epochs):
-    print('\nEpoch {} of {}\n'.format(e+1,epochs))
+    print('\nEpoch {} of {}\n'.format(e + 1, epochs))
 
     network.train()
-    total=0
-    correct=0
+    total = 0
+    correct = 0
     for i, (images, labels) in enumerate(data_loader_train):
-        print('Training batch {}'.format(i+1))
+        if i % 10 == 0: print('Training batch {}'.format(i + 1))
         if cuda:
             images = images.cuda()
             labels = labels.cuda()
@@ -146,13 +149,13 @@ for e in range(epochs):
         _, predicted = torch.max(scores.data, 1)
         total += labels.size(0)
         correct += (predicted == labels.data).sum()
-    print('Mean train accuracy over epoch = {}'.format(total / correct))
+    print('Mean train accuracy over epoch = {}'.format(correct / total))
 
     network.eval()
-    total=0
-    correct=0
+    print('Validation')
+    total = 0
+    correct = 0
     for i, (images, labels) in enumerate(data_loader_val):
-        print('Validation')
         if cuda:
             images = images.cuda()
             labels = labels.cuda()
@@ -165,5 +168,4 @@ for e in range(epochs):
         _, predicted = torch.max(scores.data, 1)
         total += labels.size(0)
         correct += (predicted == labels.data).sum()
-    print('Mean val accuracy over epoch = {}'.format(total/correct))
-
+    print('Mean val accuracy over epoch = {}'.format(correct / total))
