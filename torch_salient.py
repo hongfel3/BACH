@@ -9,6 +9,7 @@ import numpy as np
 
 initial_learning_rate = 0.001
 batch_size = 4
+lambda_saliency = 0.0
 
 cuda = torch.cuda.is_available()
 
@@ -108,18 +109,26 @@ network = NW()
 if cuda:
     network.cuda()
 
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(network.parameters(), lr=initial_learning_rate)
+
 ###
 
 network.train()
 
 for i, (images, labels) in enumerate(data_loader):
+    print('Batch {}'.format(i))
     if cuda:
         images = images.cuda()
         labels = labels.cuda()
 
     images = Variable(images)
     labels = Variable(labels.long())
+    optimizer.zero_grad()
 
-    output = network(images)
+    scores, saliencies = network(images)
 
-    break
+    loss = criterion(scores, labels) + lambda_saliency * torch.sum(saliencies)
+
+    loss.backward()
+    optimizer.step()
