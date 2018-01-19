@@ -22,7 +22,7 @@ data_transform = transforms.Compose([
 
 ###
 
-data_dir_mini = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/Mini_set'
+data_dir_mini = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Mini_set'
 dataset_mini = datasets.ImageFolder(root=data_dir_mini, transform=data_transform)
 mini_loader = torch.utils.data.DataLoader(dataset_mini, batch_size=64, shuffle=True)
 
