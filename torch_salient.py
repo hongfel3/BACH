@@ -20,7 +20,7 @@ data_transform = transforms.Compose([
 
 ###
 
-data_dir_mini = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/BACH_normalized'
+data_dir_mini = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/BACH_normalized_2class'
 dataset = datasets.ImageFolder(root=data_dir_mini, transform=data_transform)
 data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
@@ -114,5 +114,14 @@ for i, (images, labels) in enumerate(data_loader):
     if cuda:
         images.cuda()
         labels.cuda()
+
+    images=Variable(images)
+    labels=Variable(labels.long())
+
+    output=network(images)
+
+    c=2
+
+
 
 
