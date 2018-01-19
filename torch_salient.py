@@ -8,8 +8,10 @@ import numpy as np
 ###
 
 initial_learning_rate = 0.001
-batch_size = 4
 lambda_saliency = 0.0
+
+epochs = 1
+batch_size = 4
 
 cuda = torch.cuda.is_available()
 
@@ -118,20 +120,50 @@ optimizer = torch.optim.Adam(network.parameters(), lr=initial_learning_rate)
 
 ###
 
-network.train()
-for i, (images, labels) in enumerate(data_loader_train):
-    print('Batch {}'.format(i))
-    if cuda:
-        images = images.cuda()
-        labels = labels.cuda()
+for e in range(epochs):
+    print('\nEpoch {} of {}\n'.format(e+1,epochs))
 
-    images = Variable(images)
-    labels = Variable(labels.long())
-    optimizer.zero_grad()
+    network.train()
+    total=0
+    correct=0
+    for i, (images, labels) in enumerate(data_loader_train):
+        print('Training batch {}'.format(i+1))
+        if cuda:
+            images = images.cuda()
+            labels = labels.cuda()
 
-    scores, saliencies = network(images)
+        images = Variable(images)
+        labels = Variable(labels.long())
+        optimizer.zero_grad()
 
-    loss = criterion(scores, labels) + lambda_saliency * torch.sum(saliencies)
+        scores, saliencies = network(images)
 
-    loss.backward()
-    optimizer.step()
+        loss = criterion(scores, labels) + lambda_saliency * torch.sum(saliencies)
+
+        loss.backward()
+        optimizer.step()
+
+        _, predicted = torch.max(scores.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels.data).sum()
+    print('Mean train accuracy over epoch = {}'.format(total / correct))
+
+    network.eval()
+    total=0
+    correct=0
+    for i, (images, labels) in enumerate(data_loader_val):
+        print('Validation')
+        if cuda:
+            images = images.cuda()
+            labels = labels.cuda()
+
+        images = Variable(images)
+        labels = Variable(labels.long())
+
+        scores, saliencies = network(images)
+
+        _, predicted = torch.max(scores.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels.data).sum()
+    print('Mean val accuracy over epoch = {}'.format(total/correct))
+
