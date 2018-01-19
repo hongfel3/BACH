@@ -10,7 +10,7 @@ import numpy as np
 initial_learning_rate = 1e-3
 lambda_saliency = 0.0
 
-epochs = 10
+epochs = 40
 batch_size = 16
 
 cuda = torch.cuda.is_available()
