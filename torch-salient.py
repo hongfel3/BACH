@@ -8,7 +8,7 @@ import numpy as np
 ###
 
 initial_learning_rate = 1e-3
-lambda_saliency = 0.0
+lambda_sparse = 0.0
 
 epochs = 40
 batch_size = 16
@@ -68,7 +68,7 @@ class NW(nn.Module):
         self.fc1 = dense(2048, 512)
         self.fc2 = dense(512, 128)
         self.fc3 = nn.Linear(128, 2)
-        self.salient = nn.Linear(128, 2)
+        self.fc4 = nn.Linear(128, 1)
 
     def get_features(self, x, verbose=False):
         # if verbose: print(x.shape)
@@ -100,16 +100,16 @@ class NW(nn.Module):
                 patch = x[:, :, i * 256:(i + 1) * 256, j * 256:(j + 1) * 256]
                 features = self.get_features(patch, verbose=False)
 
-                weights = torch.abs(self.salient(features))
+                importance = 1.0 / (1 + torch.exp(-1 * self.fc4(features)))
 
                 if i == 0 and j == 0:
-                    scores = self.fc3(features) * weights
-                    saliencies = weights
+                    scores = self.fc3(features) * importance
+                    sparse = importance
                 else:
-                    scores += self.fc3(features) * weights
-                    saliencies = torch.cat((saliencies, weights), dim=1)
+                    scores += self.fc3(features) * importance
+                    sparse = torch.cat((sparse, importance), dim=1)
 
-        return (scores, saliencies)
+        return scores, sparse
 
 
 ###
@@ -131,7 +131,7 @@ for e in range(epochs):
     total = 0
     correct = 0
     for i, (images, labels) in enumerate(data_loader_train):
-        if i % 5 == 0: print('Training batch {} of {}'.format(i + 1,len(data_loader_train)))
+        if i % 5 == 0: print('Training batch {} of {}'.format(i + 1, len(data_loader_train)))
         if cuda:
             images = images.cuda()
             labels = labels.cuda()
@@ -140,9 +140,9 @@ for e in range(epochs):
         labels = Variable(labels.long())
         optimizer.zero_grad()
 
-        scores, saliencies = network(images)
+        scores, sparse = network(images)
 
-        loss = criterion(scores, labels) + lambda_saliency * torch.sum(saliencies)
+        loss = criterion(scores, labels) + lambda_sparse * torch.sum(sparse)
 
         loss.backward()
         optimizer.step()
@@ -164,7 +164,7 @@ for e in range(epochs):
         images = Variable(images)
         labels = Variable(labels.long())
 
-        scores, saliencies = network(images)
+        scores, _ = network(images)
 
         _, predicted = torch.max(scores.data, 1)
         total += labels.size(0)

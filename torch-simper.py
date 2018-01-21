@@ -48,7 +48,7 @@ def dense(inputs, outputs):
         nn.Linear(inputs, outputs),
         # nn.BatchNorm1d(outputs, momentum=0.9),
         nn.ReLU())
-    # nn.Dropout())
+        # nn.Dropout())
     return layer
 
 
