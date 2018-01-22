@@ -48,7 +48,7 @@ def dense(inputs, outputs):
         nn.Linear(inputs, outputs),
         # nn.BatchNorm1d(outputs, momentum=0.9),
         nn.ReLU())
-        # nn.Dropout())
+    # nn.Dropout())
     return layer
 
 
@@ -59,14 +59,15 @@ class NW(nn.Module):
     def __init__(self):
         super(NW, self).__init__()
         # self.bn0 = nn.BatchNorm2d(3, momentum=0.9)
-        self.conv1 = conv_relu_maxpool(3, 16, 3, 1, 2)
-        self.conv2 = conv_relu_maxpool(16, 32, 3, 1, 2)
-        self.conv3 = conv_relu_maxpool(32, 64, 3, 1, 2)
-        self.conv4 = conv_relu_maxpool(64, 64, 3, 1, 2)
-        self.conv5 = conv_relu_maxpool(64, 32, 3, 1, 2)
-        self.fc1 = dense(2048, 512)
-        self.fc2 = dense(512, 128)
-        self.fc3 = nn.Linear(128, 2)
+        self.conv1 = conv_relu_maxpool(3, 32, 3, 1, 2)
+        self.conv2 = conv_relu_maxpool(32, 32, 3, 1, 2)
+        self.conv3 = conv_relu_maxpool(32, 32, 3, 1, 2)
+        self.conv4 = conv_relu_maxpool(32, 32, 3, 1, 2)
+        self.conv5 = conv_relu_maxpool(32, 32, 3, 1, 2)
+        self.conv6 = conv_relu_maxpool(32, 32, 3, 1, 2)
+        self.fc1 = dense(512, 128)
+        self.fc2 = dense(128, 32)
+        self.fc3 = nn.Linear(32, 2)
 
     def get_features(self, x, verbose=False):
         # if verbose: print(x.shape)
@@ -81,6 +82,8 @@ class NW(nn.Module):
         x = self.conv4(x)
         if verbose: print(x.shape)
         x = self.conv5(x)
+        if verbose: print(x.shape)
+        x = self.conv6(x)
         if verbose: print(x.shape)
         x = x.view(x.size(0), -1)
         if verbose: print(x.shape)
@@ -100,10 +103,12 @@ class NW(nn.Module):
 
                 if i == 0 and j == 0:
                     scores = self.fc3(features)
+                    # batch_features = features
                 else:
                     scores += self.fc3(features)
+                    # batch_features = torch.cat((batch_features, features), dim=1)
 
-        return scores
+        return scores  # , batch_features
 
 
 ###
@@ -125,7 +130,7 @@ for e in range(epochs):
     total = 0
     correct = 0
     for i, (images, labels) in enumerate(data_loader_train):
-        if i % 5 == 0: print('Training batch {} of {}'.format(i + 1,len(data_loader_train)))
+        if (i + 1) % 5 == 0: print('Training batch {} of {}'.format(i + 1, len(data_loader_train)))
         if cuda:
             images = images.cuda()
             labels = labels.cuda()
@@ -164,3 +169,24 @@ for e in range(epochs):
         total += labels.size(0)
         correct += (predicted == labels.data).sum()
     print('Mean val accuracy over epoch = {}'.format(correct / total))
+
+###
+
+# network.eval()
+# for i, (images, labels) in enumerate(data_loader_train):
+#     if cuda:
+#         images = images.cuda()
+#         labels = labels.cuda()
+#
+#     images = Variable(images)
+#     labels = Variable(labels.long())
+#
+#     _, batch_features = network(images)
+#
+#     if i == 0:
+#         features = batch_features.data
+#     else:
+#         features = np.append(features, batch_features.data, axis=0)
+#
+# print(type(features))
+# print(features.shape)
