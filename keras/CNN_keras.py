@@ -16,7 +16,7 @@ batch_size = 64
 ###
 
 ### change me ###
-root_dir = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge'
+root_dir = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge'
 
 ###
 
