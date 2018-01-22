@@ -120,8 +120,12 @@ optimizer = torch.optim.Adam(network.parameters(), lr=lr)
 
 ###
 
+best_val_acc = 0.
+
 for epoch in range(num_epochs):
     print('\n\nEpoch {}'.format(epoch))
+
+    ###
 
     network.train()
     total = 0
@@ -148,6 +152,8 @@ for epoch in range(num_epochs):
     accuracy = correct / total
     print('Mean train acc over epoch = {}'.format(accuracy))
 
+    ###
+
     network.eval()
     print('Validation')
     total = 0
@@ -168,3 +174,5 @@ for epoch in range(num_epochs):
 
     accuracy = correct / total
     print('Mean val acc over epoch = {}'.format(accuracy))
+    if accuracy > best_val_acc: best_val_acc = accuracy
+    print('Best val acc = {}'.format(best_val_acc))
