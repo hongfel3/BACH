@@ -7,9 +7,12 @@ from torch import my_transforms
 
 ###
 
-cuda = torch.cuda.is_available()
-
 lr = 1e-3
+
+batch = 64
+num_epochs = 10
+
+cuda = torch.cuda.is_available()
 
 ###
 
@@ -19,46 +22,54 @@ data_transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
+null_transform = transforms.Compose([
+    transforms.ToTensor()
+])
+
 ###
 
 data_dir_mini = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Mini_set'
-dataset_mini = datasets.ImageFolder(root=data_dir_mini, transform=data_transform)
-mini_loader = torch.utils.data.DataLoader(dataset_mini, batch_size=64, shuffle=True)
+data_dir_train = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Train_set'
+data_dir_val = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Val_set'
+
+mini = True
+
+if mini:
+    dataset_train = datasets.ImageFolder(root=data_dir_mini, transform=data_transform)
+    train_loader = pytorch.utils.data.DataLoader(dataset_train, batch_size=batch, shuffle=True)
+
+    dataset_val = datasets.ImageFolder(root=data_dir_mini, transform=null_transform)
+    val_loader = pytorch.utils.data.DataLoader(dataset_val, batch_size=batch, shuffle=True)
+
+if not mini:
+    dataset_train = datasets.ImageFolder(root=data_dir_train, transform=data_transform)
+    train_loader = pytorch.utils.data.DataLoader(dataset_train, batch_size=batch, shuffle=True)
+
+    dataset_val = datasets.ImageFolder(root=data_dir_val, transform=null_transform)
+    val_loader = pytorch.utils.data.DataLoader(dataset_val, batch_size=batch, shuffle=True)
 
 
 ###
 
-# data_dir_train = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Train_set'
-# data_dir_val = '/home/peter/datasets/ICIAR2018_BACH_Challenge/Val_set'
-
-# dataset_train = datasets.ImageFolder(root=data_dir_train, transform=data_transform)
-# train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=32, shuffle=True)
-
-# dataset_val = datasets.ImageFolder(root=data_dir_val, transform=data_transform)
-# val_loader = torch.utils.data.DataLoader(dataset_val, batch_size=16, shuffle=True)
-
-
-###
-
-def conv3x3(inputs, outputs, pad, mp):
+def conv3x3(inputs, outputs, pad, maxpool):
     if pad == 'valid':
         pad = 0
     elif pad == 'same':
         pad = 1
     layer = nn.Sequential(
         nn.Conv2d(inputs, outputs, kernel_size=3, stride=1, padding=pad),
-        nn.BatchNorm2d(outputs, momentum=0.9),
+        # nn.BatchNorm2d(outputs, momentum=0.9), # momentum!?
         nn.ReLU(),
-        nn.MaxPool2d(kernel_size=mp, stride=mp))
+        nn.MaxPool2d(kernel_size=maxpool, stride=maxpool))
     return layer
 
 
 def dense(inputs, outputs):
     layer = nn.Sequential(
         nn.Linear(inputs, outputs),
-        nn.BatchNorm1d(outputs, momentum=0.9),
-        nn.ReLU(),
-        nn.Dropout())
+        # nn.BatchNorm1d(outputs, momentum=0.9), # momentum!?
+        nn.ReLU())
+    # nn.Dropout())
     return layer
 
 
@@ -102,63 +113,53 @@ if cuda:
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(network.parameters(), lr=lr)
 
-loss_train = []
-loss_eval = []
-acc = []
+###
 
-num_epochs = 10
 for epoch in range(num_epochs):
-
     print('Epoch {}'.format(epoch))
+
     network.train()
-    cnt = 0
-    losses = 0.0
-    for i, (images, labels) in enumerate(mini_loader):
-        print('Training batch {}'.format(i))
+    total = 0
+    correct = 0
+    for i, (images, labels) in enumerate(train_loader):
+        if i % 10 == 0: print('Training batch {}'.format(i))
         if cuda:
-            images=images.cuda()
-            labels=labels.cuda()
+            images = images.cuda()
+            labels = labels.cuda()
+
         images = Variable(images)
         labels = Variable(labels.long())
+
         optimizer.zero_grad()
         output = network(images)
         loss = criterion(output, labels)
         loss.backward()
         optimizer.step()
 
-        losses += loss.data
-        cnt += 1
-    loss_train.append(losses / cnt)
+        _, predicted = torch.max(output.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels.data).sum()
 
-    print('Validation Acc')
+    accuracy = correct / total
+    print('Mean train acc over epoch = {}'.format(accuracy))
+
     network.eval()
+    print('Validation')
     total = 0
     correct = 0
-    cnt = 0
-    losses = 0.0
-    for images, labels in mini_loader:
+    for images, labels in val_loader:
         if cuda:
-            images=images.cuda()
-            labels=labels.cuda()
+            images = images.cuda()
+            labels = labels.cuda()
+
         images = Variable(images)
         labels = Variable(labels.long())
+
         output = network(images)
 
         _, predicted = torch.max(output.data, 1)
         total += labels.size(0)
         correct += (predicted == labels.data).sum()
 
-        loss = criterion(output, labels)
-        losses += loss.data
-        cnt += 1
-    accuracy = 100 * correct / total
-    print(accuracy)
-    acc.append(accuracy)
-    loss_eval.append(losses / cnt)
-
-    # print('Saving model Params')
-    # torch.save(network.state_dict(), 'nw' + str(epoch) + '.pkl')
-
-print(loss_train)
-print(loss_eval)
-print(acc)
+    accuracy = correct / total
+    print('Mean val acc over epoch = {}'.format(accuracy))
