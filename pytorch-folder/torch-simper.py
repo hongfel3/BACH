@@ -106,7 +106,7 @@ class NW(nn.Module):
                     # batch_features = features
                 else:
                     scores += self.fc3(features)
-                    # batch_features = pytorch.cat((batch_features, features), dim=1)
+                    # batch_features = pytorch-folder.cat((batch_features, features), dim=1)
 
         return scores  # , batch_features
 

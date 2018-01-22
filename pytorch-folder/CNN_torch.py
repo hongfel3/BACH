@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import transforms, datasets
 
-from pytorch import my_transforms
+from pytorch-folder import my_transforms
 
 ###
 
