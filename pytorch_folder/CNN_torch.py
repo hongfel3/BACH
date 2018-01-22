@@ -36,17 +36,17 @@ mini = True
 
 if mini:
     dataset_train = datasets.ImageFolder(root=data_dir_mini, transform=data_transform)
-    train_loader = pytorch.utils.data.DataLoader(dataset_train, batch_size=batch, shuffle=True)
+    train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=batch, shuffle=True)
 
     dataset_val = datasets.ImageFolder(root=data_dir_mini, transform=null_transform)
-    val_loader = pytorch.utils.data.DataLoader(dataset_val, batch_size=batch, shuffle=True)
+    val_loader = torch.utils.data.DataLoader(dataset_val, batch_size=batch, shuffle=True)
 
 if not mini:
     dataset_train = datasets.ImageFolder(root=data_dir_train, transform=data_transform)
-    train_loader = pytorch.utils.data.DataLoader(dataset_train, batch_size=batch, shuffle=True)
+    train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=batch, shuffle=True)
 
     dataset_val = datasets.ImageFolder(root=data_dir_val, transform=null_transform)
-    val_loader = pytorch.utils.data.DataLoader(dataset_val, batch_size=batch, shuffle=True)
+    val_loader = torch.utils.data.DataLoader(dataset_val, batch_size=batch, shuffle=True)
 
 
 ###
