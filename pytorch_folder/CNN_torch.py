@@ -8,7 +8,7 @@ from pytorch_folder import my_transforms
 ###
 
 lr = 1e-3
-bn_momentum = 0.9
+batchnorm_momentum = 0.9
 
 batch = 64
 num_epochs = 40
@@ -61,7 +61,7 @@ def conv3x3(inputs, outputs, pad, maxpool):
         pad = 1
     layer = nn.Sequential(
         nn.Conv2d(inputs, outputs, kernel_size=3, stride=1, padding=pad),
-        nn.BatchNorm2d(outputs, momentum=bn_momentum),
+        nn.BatchNorm2d(outputs, momentum=batchnorm_momentum),
         nn.ReLU(),
         nn.MaxPool2d(kernel_size=maxpool, stride=maxpool))
     return layer
@@ -70,7 +70,7 @@ def conv3x3(inputs, outputs, pad, maxpool):
 def dense(inputs, outputs):
     layer = nn.Sequential(
         nn.Linear(inputs, outputs),
-        nn.BatchNorm1d(outputs, momentum=bn_momentum),
+        nn.BatchNorm1d(outputs, momentum=batchnorm_momentum),
         nn.ReLU())
     # nn.Dropout())
     return layer
@@ -85,7 +85,7 @@ def final(inputs, outputs):
 class NW(nn.Module):
     def __init__(self):
         super(NW, self).__init__()
-        self.center = nn.BatchNorm2d(num_features=3, momentum=bn_momentum)
+        self.center = nn.BatchNorm2d(num_features=3, momentum=batchnorm_momentum)
         self.conv1 = conv3x3(3, 16, 'valid', 3)
         self.conv2 = conv3x3(16, 32, 'valid', 2)
         self.conv3 = conv3x3(32, 64, 'same', 2)
