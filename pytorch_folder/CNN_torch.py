@@ -10,7 +10,7 @@ from pytorch_folder import my_transforms
 lr = 1e-3
 
 batch = 64
-num_epochs = 10
+num_epochs = 40
 
 cuda = torch.cuda.is_available()
 
@@ -122,7 +122,7 @@ for epoch in range(num_epochs):
     total = 0
     correct = 0
     for i, (images, labels) in enumerate(train_loader):
-        if i % 10 == 0: print('Training batch {}'.format(i))
+        if i % 10 == 0: print('Training batch {} of {}'.format(i,len(train_loader)))
         if cuda:
             images = images.cuda()
             labels = labels.cuda()
