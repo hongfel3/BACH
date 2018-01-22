@@ -1,10 +1,9 @@
-import numpy as np
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import transforms, datasets
 
-from ztrash.pytorch_folder import my_transforms
+from torch import my_transforms
 
 ###
 
