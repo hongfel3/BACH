@@ -131,7 +131,7 @@ for epoch in range(num_epochs):
     total = 0
     correct = 0
     for i, (images, labels) in enumerate(train_loader):
-        if i % 10 == 0: print('Training batch {} of {}'.format(i, len(train_loader)))
+        if i % 20 == 0: print('Training batch {} of {}'.format(i, len(train_loader)))
         if cuda:
             images = images.cuda()
             labels = labels.cuda()
