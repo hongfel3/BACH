@@ -33,7 +33,9 @@ data_dir_mini = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Mini
 data_dir_train = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Train_set'
 data_dir_val = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Val_set'
 
-mini = True
+###
+
+mini = False
 
 if mini:
     dataset_train = datasets.ImageFolder(root=data_dir_mini, transform=null_transform)
