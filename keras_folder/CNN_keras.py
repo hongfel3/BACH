@@ -1,3 +1,7 @@
+'''
+CNN implemented in Keras
+'''
+
 from keras.layers import Input, Dense, Conv2D, Activation, MaxPool2D, Flatten, BatchNormalization
 from keras import optimizers
 from keras.models import Model
@@ -6,19 +10,20 @@ from keras.callbacks import TensorBoard, ModelCheckpoint
 from keras import backend
 
 import os
+
 from utils import misc_utils as mu
 
-###
+### learning parameters
 
 initial_learn_rate = 1e-3
 batch_size = 64
 
-###
+### where is data?
 
 ### change me ###
 root_dir = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge'
 
-###
+### prep data loaders
 
 mini = False
 
@@ -46,7 +51,7 @@ elif mini == False:
     print(val_data.class_indices)
 
 
-###
+### define model
 
 def conv3x3_relu(x, num_filters, pad='valid'):
     x = Conv2D(filters=num_filters, kernel_size=(3, 3), strides=(1, 1), padding=pad)(x)
@@ -88,7 +93,7 @@ def basic_network(x):
     return Dense(units=4, activation='softmax')(x)
 
 
-###
+### build
 
 inputs = Input(shape=(512, 512, 3))
 predictions = basic_network(inputs)
@@ -107,7 +112,7 @@ call1 = TensorBoard(log_dir='logs')
 call2 = ModelCheckpoint('best_val_acc_model.h5', monitor='val_acc', verbose=True, save_best_only=True)
 call3 = ModelCheckpoint('best_val_loss_model.h5', monitor='val_loss', verbose=True, save_best_only=True)
 
-###
+### train
 
 total_epochs = 50
 

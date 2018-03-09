@@ -20,3 +20,4 @@ There are four classes (100 images per class):
 
 The general idea is to build a patch based classifier (CNN) and then aggregate the results (majority vote) to give an overall image class. The patch size used is 512x512.
 
+Implementations of the CNNs are found in the folders 'keras_folder' and 'pytorch_folder'. I have achieved results comparable to the original paper with these implementations.

@@ -2,10 +2,12 @@ import os
 from utils import misc_utils as mu
 
 ### add stain normalization code ###
+### needs to be changed to your path ###
 import sys
 sys.path.append('/home/peter/projects_/Stain-Normalization-')
 import stainNorm_Vahadane as stain
 
+### where is data stored? ###
 ### change me ###
 data_root = '/media/peter/HDD 1/ICIAR2018_BACH_Challenge/'
 

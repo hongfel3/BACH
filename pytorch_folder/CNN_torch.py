@@ -1,3 +1,7 @@
+'''
+CNN implemented in PyTorch
+'''
+
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -5,7 +9,7 @@ from torchvision import transforms, datasets
 
 from pytorch_folder import my_transforms
 
-###
+### learning parameters
 
 lr = 1e-3
 batchnorm_momentum = 0.9
@@ -15,7 +19,7 @@ num_epochs = 40
 
 cuda = torch.cuda.is_available()
 
-###
+### transforms
 
 data_transform = transforms.Compose([
     my_transforms.RandomRot(),
@@ -27,13 +31,13 @@ null_transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
-###
+### where is data?
 
 data_dir_mini = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Mini_set'
 data_dir_train = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Train_set'
 data_dir_val = '/media/peter/HDD 1/datasets_peter/ICIAR2018_BACH_Challenge/Val_set'
 
-###
+### prepare data loaders
 
 mini = False
 
@@ -52,7 +56,7 @@ if not mini:
     val_loader = torch.utils.data.DataLoader(dataset_val, batch_size=batch, shuffle=True)
 
 
-###
+### some layers
 
 def conv3x3(inputs, outputs, pad, maxpool):
     if pad == 'valid':
@@ -72,7 +76,6 @@ def dense(inputs, outputs):
         nn.Linear(inputs, outputs),
         nn.BatchNorm1d(outputs, momentum=batchnorm_momentum),
         nn.ReLU())
-    # nn.Dropout())
     return layer
 
 
@@ -80,7 +83,7 @@ def final(inputs, outputs):
     return nn.Linear(inputs, outputs)
 
 
-###
+### model definition
 
 class NW(nn.Module):
     def __init__(self):
@@ -109,7 +112,7 @@ class NW(nn.Module):
         return x
 
 
-###
+### build
 
 network = NW()
 if cuda:
@@ -118,14 +121,14 @@ if cuda:
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(network.parameters(), lr=lr)
 
-###
+### train
 
 best_val_acc = 0.
 
 for epoch in range(num_epochs):
     print('\n\nEpoch {}'.format(epoch))
 
-    ###
+    ### training loss/accuracy
 
     network.train()
     total = 0
@@ -152,7 +155,7 @@ for epoch in range(num_epochs):
     accuracy = correct / total
     print('Mean train acc over epoch = {}'.format(accuracy))
 
-    ###
+    ### validation loss/accuracy
 
     network.eval()
     print('Validation')
